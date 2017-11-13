@@ -24,6 +24,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     //Butterknife
     implementation 'com.jakewharton:butterknife:8.8.1'
+    implementation 'com.google.firebase:firebase-auth:11.0.4'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     //Dart
     implementation 'com.f2prateek.dart:dart:2.0.3'
@@ -40,8 +41,15 @@ dependencies {
     //Toothpick
     implementation 'com.github.stephanenicolas.toothpick:toothpick-runtime:1.1.1'
     annotationProcessor 'com.github.stephanenicolas.toothpick:toothpick-compiler:1.1.1'
+    //RecyclerView
     implementation 'com.android.support:recyclerview-v7:26.1.0'
+    //CircleImageView
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+
+apply plugin: 'com.google.gms.google-services'
