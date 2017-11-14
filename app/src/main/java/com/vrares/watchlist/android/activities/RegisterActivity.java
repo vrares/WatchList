@@ -57,7 +57,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
     }
 
     @OnClick(R.id.register_btn_register)
-    private void register() {
+    public void register() {
         if (password.getText().toString().equals("") ||
                 firstName.getText().toString().equals("") ||
                 lastName.getText().toString().equals("")||
@@ -78,4 +78,14 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
 
     }
 
+    @Override
+    public void onAccountCreatedFailure(Exception e) {
+        Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onUserInsertedSuccess() {
+        Toast.makeText(this, "User created with success", Toast.LENGTH_SHORT).show();
+        //// TODO: 11/14/2017 Go to movie list
+    }
 }
