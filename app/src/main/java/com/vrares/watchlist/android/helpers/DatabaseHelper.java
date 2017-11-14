@@ -8,9 +8,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.vrares.watchlist.models.User;
+import com.vrares.watchlist.models.pojos.User;
+import com.vrares.watchlist.presenters.callbacks.LoginPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.RegisterPresenterCallback;
-import com.vrares.watchlist.presenters.classes.RegisterPresenter;
 
 import javax.inject.Singleton;
 
@@ -21,11 +21,14 @@ public class DatabaseHelper {
     private static final String TAG = "Error";
 
     private RegisterPresenterCallback registerPresenterCallback;
+    private LoginPresenterCallback loginPresenterCallback;
+
     private DatabaseReference ref;
     private FirebaseAuth auth;
 
-    public void insertUserIntoDatabase(final User user, final RegisterPresenterCallback registerPresenterCallback) {
-        this.registerPresenterCallback = registerPresenterCallback;
+    public void insertUserIntoDatabase(final User user, final RegisterPresenterCallback registerCallback, final LoginPresenterCallback  loginCallback) {
+        this.registerPresenterCallback = registerCallback;
+        this.loginPresenterCallback = loginCallback;
         ref = FirebaseDatabase.getInstance().getReference(USERS_NODE);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -34,7 +37,11 @@ public class DatabaseHelper {
                 if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
                     ref.child(auth.getCurrentUser().getUid()).setValue(user);
                 }
-                registerPresenterCallback.onUserInsertedSuccess();
+                if (loginPresenterCallback == null) {
+                    registerPresenterCallback.onUserInsertedSuccess();
+                } else {
+                    loginPresenterCallback.onUserInsertedSuccess();
+                }
             }
 
             @Override

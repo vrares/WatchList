@@ -1,8 +1,4 @@
-package com.vrares.watchlist.models;
-
-/**
- * Created by rares.vultur on 11/13/2017.
- */
+package com.vrares.watchlist.models.pojos;
 
 public class User {
 

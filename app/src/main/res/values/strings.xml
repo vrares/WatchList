@@ -10,4 +10,7 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="confirm_password">Confirm Password</string>
+    <string name="facebook_app_id">338086423269756</string>
+    <string name="fb_login_protocol_scheme">fb338086423269756</string>
+
 </resources>

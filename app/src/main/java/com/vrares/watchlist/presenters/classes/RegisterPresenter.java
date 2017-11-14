@@ -3,7 +3,7 @@ package com.vrares.watchlist.presenters.classes;
 import com.vrares.watchlist.android.helpers.DatabaseHelper;
 import com.vrares.watchlist.android.views.RegisterView;
 import com.vrares.watchlist.android.helpers.ConnectivityHelper;
-import com.vrares.watchlist.models.User;
+import com.vrares.watchlist.models.pojos.User;
 import com.vrares.watchlist.presenters.callbacks.RegisterPresenterCallback;
 
 import javax.inject.Inject;
@@ -29,7 +29,7 @@ public class RegisterPresenter implements RegisterPresenterCallback{
 
     @Override
     public void onAccountCreated(User user) {
-        databaseHelper.insertUserIntoDatabase(user, this);
+        databaseHelper.insertUserIntoDatabase(user, this, null);
     }
 
     @Override

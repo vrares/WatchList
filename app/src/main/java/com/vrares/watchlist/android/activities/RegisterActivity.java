@@ -1,5 +1,6 @@
 package com.vrares.watchlist.android.activities;
 
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
@@ -9,7 +10,8 @@ import android.widget.Toast;
 import com.vrares.watchlist.MyApplication;
 import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.views.RegisterView;
-import com.vrares.watchlist.models.User;
+import com.vrares.watchlist.models.pojos.User;
+import com.vrares.watchlist.models.utils.ProgressDialogUtil;
 import com.vrares.watchlist.presenters.classes.RegisterPresenter;
 
 import javax.inject.Inject;
@@ -23,6 +25,7 @@ import toothpick.Toothpick;
 public class RegisterActivity extends AppCompatActivity implements RegisterView{
 
     private static final String DEFAULT_PICTURE = "default";
+    private static final String REGISTERING_MESSAGE = "Registering...";
 
     @BindView(R.id.register_et_first_name)EditText firstName;
     @BindView(R.id.register_et_last_name)EditText lastName;
@@ -34,6 +37,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
     @Inject RegisterPresenter registerPresenter;
 
     private Scope scope;
+    private ProgressDialogUtil progressDialogUtil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
         ButterKnife.bind(this);
         scope = Toothpick.openScopes(MyApplication.getInstance(), this);
         Toothpick.inject(this, scope);
+        progressDialogUtil = new ProgressDialogUtil(this);
     }
 
     @Override
@@ -68,6 +73,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
             Toast.makeText(this, "Passwords don't match", Toast.LENGTH_SHORT).show();
 
         } else {
+            progressDialogUtil.showProgressDialog(REGISTERING_MESSAGE);
             User user = new User(firstName.getText().toString(),
                     lastName.getText().toString(),
                     email.getText().toString(),
@@ -80,11 +86,13 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
 
     @Override
     public void onAccountCreatedFailure(Exception e) {
+        progressDialogUtil.dismiss();
         Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onUserInsertedSuccess() {
+        progressDialogUtil.dismiss();
         Toast.makeText(this, "User created with success", Toast.LENGTH_SHORT).show();
         //// TODO: 11/14/2017 Go to movie list
     }
