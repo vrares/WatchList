@@ -164,7 +164,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView, Googl
     @Override
     public void onSignInFailed(Exception e) {
         progressDialogUtil.dismiss();
-        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
     }
 
     @Override
