@@ -23,11 +23,14 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                    FirebaseAuth.getInstance().signOut();
+                    Intent intent = new Intent(getApplicationContext(), NavigationActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
-                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                startActivity(intent);
-                finish();
             }
         }, SPLASH_TIME_OUT);
 

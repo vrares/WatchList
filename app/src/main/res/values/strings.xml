@@ -12,5 +12,24 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="facebook_app_id">338086423269756</string>
     <string name="fb_login_protocol_scheme">fb338086423269756</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="movie_list">Movie List</string>
+    <string name="my_stuff">My Stuff</string>
+    <string name="my_profile">My Profile</string>
+    <string name="my_favourite_movies">My Favourite Movies</string>
+    <string name="my_hit_list">My Hit-List</string>
+    <string name="user_interactions">User Interactions</string>
+    <string name="friends">Friends</string>
+    <string name="search_for_a_user">Search for a User</string>
+    <string name="connectivity">Connectivity</string>
+    <string name="sign_out">Sign Out</string>
 
 </resources>

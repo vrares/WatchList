@@ -1,6 +1,7 @@
 package com.vrares.watchlist.android.activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
@@ -94,6 +95,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
     public void onUserInsertedSuccess() {
         progressDialogUtil.dismiss();
         Toast.makeText(this, "User created with success", Toast.LENGTH_SHORT).show();
-        //// TODO: 11/14/2017 Go to movie list
+        Intent intent = new Intent(this, NavigationActivity.class);
+        startActivity(intent);
     }
 }

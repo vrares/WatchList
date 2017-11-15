@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/movie_list_poster"
+        android:layout_marginEnd="7dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp" />
+
+    <TextView
+        android:id="@+id/movie_list_title"
+        tools:text="Minions"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        android:layout_toEndOf="@id/movie_list_poster"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/movie_list_deatils"
+        tools:text="There are 3 other watchers"
+        android:layout_toEndOf="@id/movie_list_poster"
+        android:layout_below="@id/movie_list_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/movie_list_button"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/btn_unseen"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+
+    <View
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/movie_list_poster"
+        android:background="@color/colorPrimaryDark"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"/>
+
+</RelativeLayout>

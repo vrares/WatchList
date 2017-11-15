@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_movie_list"
+            android:icon="@drawable/ic_movie"
+            android:title="@string/movie_list" />
+
+        <item android:title="@string/my_stuff">
+            <menu>
+                <item
+                    android:id="@+id/nav_user_details"
+                    android:icon="@drawable/ic_person_black_24dp"
+                    android:title="@string/my_profile" />
+                <item
+                    android:id="@+id/nav_favourite_list"
+                    android:icon="@drawable/ic_heart"
+                    android:title="@string/my_favourite_movies" />
+                <item
+                    android:id="@+id/nav_hit_list"
+                    android:icon="@drawable/btn_seen"
+                    android:title="@string/my_hit_list" />
+            </menu>
+        </item>
+
+        <item android:title="@string/user_interactions">
+            <menu>
+                <item
+                    android:id="@+id/nav_friends"
+                    android:icon="@drawable/ic_persons_group"
+                    android:title="@string/friends" />
+                <item
+                    android:id="@+id/nav_user_search"
+                    android:icon="@android:drawable/ic_search_category_default"
+                    android:title="@string/search_for_a_user" />
+            </menu>
+        </item>
+
+
+
+        <item android:title="@string/connectivity">
+            <menu>
+                <item
+                    android:id="@+id/nav_sign_out"
+                    android:icon="@drawable/ic_logout"
+                    android:title="@string/sign_out" />
+            </menu>
+        </item>
+    </group>
+
+
+
+</menu>

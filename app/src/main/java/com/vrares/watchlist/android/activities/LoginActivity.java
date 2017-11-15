@@ -157,8 +157,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView, Googl
 
     @Override
     public void onSignInSuccess() {
-        //// TODO: 11/14/2017 Redirect to Movie List
         progressDialogUtil.dismiss();
+        Intent intent = new Intent(this, NavigationActivity.class);
+        startActivity(intent);
     }
 
     @Override
