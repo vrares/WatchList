@@ -46,6 +46,10 @@ dependencies {
     implementation 'com.f2prateek.dart:henson:2.0.3'
     annotationProcessor 'com.f2prateek.dart:henson-processor:2.0.3'
 
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.3.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.3.1'
+
     //Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation "com.squareup.retrofit2:converter-gson:2.3.0"

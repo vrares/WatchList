@@ -19,7 +19,6 @@
 
     <string name="action_settings">Settings</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="movie_list">Movie List</string>
     <string name="my_stuff">My Stuff</string>
@@ -31,5 +30,49 @@
     <string name="search_for_a_user">Search for a User</string>
     <string name="connectivity">Connectivity</string>
     <string name="sign_out">Sign Out</string>
+    <string name="all">All</string>
+    <string name="action">Action</string>
+    <string name="adventure">Adventure</string>
+    <string name="animation">Animation</string>
+    <string name="comedy">Comedy</string>
+    <string name="crime">Crime</string>
+    <string name="documentary">Documentary</string>
+    <string name="drama">Drama</string>
+    <string name="family">Family</string>
+    <string name="fantasy">Fantasy</string>
+    <string name="history">History</string>
+    <string name="music">Music</string>
+    <string name="mystery">Mystery</string>
+    <string name="romance">Romance</string>
+    <string name="science_fiction">Science Fiction</string>
+    <string name="tv_movie">TV Movie</string>
+    <string name="thriller">Thriller</string>
+    <string name="war">War</string>
+    <string name="western">Western</string>
+    <string name="horror">Horror</string>
+    <string name="filter">Filter</string>
+
+    <string-array name="genre_arrays">
+        <item>All</item>
+        <item>Action</item>
+        <item>Adventure</item>
+        <item>Animation</item>
+        <item>Comedy</item>
+        <item>Crime</item>
+        <item>Documentary</item>
+        <item>Drama</item>
+        <item>Family</item>
+        <item>Fantasy</item>
+        <item>History</item>
+        <item>Horror</item>
+        <item>Music</item>
+        <item>Mystery</item>
+        <item>Romance</item>
+        <item>Science Fiction</item>
+        <item>TV Movie</item>
+        <item>Thriller</item>
+        <item>War</item>
+        <item>Western</item>
+    </string-array>
 
 </resources>
