@@ -173,4 +173,29 @@ public class DatabaseHelper {
         SimpleDateFormat date = new SimpleDateFormat("dd MMM");
         return date.format(calendar.getTime());
     }
+
+    public void unseeButtonAction(Movie movie, Context context, MovieListAdapterCallback movieListCallback, MovieListMovieListAdapter.MyViewHolder holder, int position) {
+        this.movieListAdapterCallback = movieListCallback;
+        final String movieId = String.valueOf(movie.getId());
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        ref = FirebaseDatabase.getInstance().getReference(MOVIES_NODE);
+        ref.child(movieId).child(SEEN_BY_NODE).child(currentUser.getUid()).removeValue();
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int seenCount = dataSnapshot.child(movieId).child(SEEN_COUNT).getValue(Integer.class);
+                if (seenCount == 1) {
+                    ref.child(movieId).removeValue();
+                } else {
+                    seenCount = seenCount - 1;
+                    ref.child(movieId).child(SEEN_COUNT).setValue(seenCount);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

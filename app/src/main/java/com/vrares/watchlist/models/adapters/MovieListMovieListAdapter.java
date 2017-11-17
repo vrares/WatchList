@@ -1,6 +1,8 @@
 package com.vrares.watchlist.models.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.helpers.DatabaseHelper;
 import com.vrares.watchlist.models.pojos.Movie;
+import com.vrares.watchlist.models.utils.ProgressDialogUtil;
 
 import java.util.ArrayList;
 
@@ -58,10 +61,33 @@ public class MovieListMovieListAdapter extends RecyclerView.Adapter<MovieListMov
             @Override
             public void onClick(View v) {
                 seenButtonAction(movie, holder, position);
+                if(holder.buttonItem.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.btn_seen).getConstantState()) {
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                    alertDialog.setMessage("Are you sure you want to delete this movie from your seen list?");
+                    alertDialog.setCancelable(true);
+
+                    alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            unseeButtonAction(movie, holder, position);
+                        }
+                    });
+
+                    alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                }
                 holder.buttonItem.setBackgroundResource(R.drawable.btn_seen);
             }
         });
 
+    }
+
+    private void unseeButtonAction(Movie movie, MyViewHolder holder, int position) {
+        databaseHelper.unseeButtonAction(movie, context, this, holder, position);
     }
 
 
