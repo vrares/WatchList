@@ -6,4 +6,6 @@ import java.util.ArrayList;
 
 public interface MovieListView {
     void onPopularMoviesRetrieved(ArrayList<PopularMovie> popularMovieList);
+
+    void onGenreMoviesRetrieved(ArrayList<PopularMovie> movieList);
 }

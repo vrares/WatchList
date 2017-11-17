@@ -72,7 +72,7 @@ public class RetrofitHelper {
         });
     }
 
-    public void getMovieListByGenre(int genre, ArrayList<PopularMovie> movieList, int pageNumber, MovieListPresenterCallback movieListCallback) {
+    public void getMovieListByGenre(int genre, int pageNumber, MovieListPresenterCallback movieListCallback) {
         this.movieListPresenterCallback = movieListCallback;
         TmdbClient tmdbClient = getRetrofitInstance().create(TmdbClient.class);
 
@@ -87,12 +87,17 @@ public class RetrofitHelper {
         call.enqueue(new Callback<PopularMovieList>() {
             @Override
             public void onResponse(Call<PopularMovieList> call, Response<PopularMovieList> response) {
-                // TODO: 11/16/2017 CALLBACK FOR GENRE 
+                if (response.isSuccessful()) {
+                    ArrayList<PopularMovie> movieList = response.body().getResults();
+                    movieListPresenterCallback.onGenreMoviesRetrieved(movieList);
+                } else {
+                    Log.d(TAG, response.message());
+                }
             }
 
             @Override
             public void onFailure(Call<PopularMovieList> call, Throwable t) {
-
+                Log.d(TAG, t.getMessage());
             }
         });
     }

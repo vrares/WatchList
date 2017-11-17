@@ -12,12 +12,12 @@ import retrofit2.http.QueryMap;
 public interface TmdbClient {
 
     String POPULAR_LIST = "/3/movie/popular";
-    String GENRE_LIST = "/3/genre";
+    String GENRE_LIST = "/3/genre/";
 
     @GET(POPULAR_LIST)
     Call<PopularMovieList> getPopularMovieList(@QueryMap Map<String, String> filters);
 
-    @GET(GENRE_LIST + "{genre}")
+    @GET(GENRE_LIST + "{genre}/movies")
     Call<PopularMovieList> getGenreMovieList(@Path("genre") String genre, @QueryMap Map<String, String> filters);
 
 }

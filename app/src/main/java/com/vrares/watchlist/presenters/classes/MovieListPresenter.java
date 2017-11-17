@@ -32,7 +32,12 @@ public class MovieListPresenter implements MovieListPresenterCallback {
         movieListView.onPopularMoviesRetrieved(popularMovieList);
     }
 
-    public void getMovieListByGenre(int genre, ArrayList<PopularMovie> movieList, int pageNumber) {
-        retrofitHelper.getMovieListByGenre(genre, movieList, pageNumber, this);
+    @Override
+    public void onGenreMoviesRetrieved(ArrayList<PopularMovie> movieList) {
+        movieListView.onGenreMoviesRetrieved(movieList);
+    }
+
+    public void getMovieListByGenre(int genre, int pageNumber) {
+        retrofitHelper.getMovieListByGenre(genre, pageNumber, this);
     }
 }

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface MovieListPresenterCallback {
     void onPopularMoviesRetrieved(ArrayList<PopularMovie> popularMovieList);
+
+    void onGenreMoviesRetrieved(ArrayList<PopularMovie> movieList);
 }

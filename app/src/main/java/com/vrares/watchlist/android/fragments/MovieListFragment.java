@@ -3,8 +3,10 @@ package com.vrares.watchlist.android.fragments;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,8 +29,11 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import toothpick.Scope;
 import toothpick.Toothpick;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,6 +64,7 @@ public class MovieListFragment extends Fragment implements MovieListView {
     @Inject MovieListPresenter movieListPresenter;
     @BindView(R.id.pb_popular_movie_list) ProgressBar pbList;
     @BindView(R.id.rv_movie_list)RecyclerView rvMovieList;
+    @BindView(R.id.fab_scroll_to_top)FloatingActionButton fabScrollToTop;
 
     private int pageNumber;
     private int flag;
@@ -111,8 +117,21 @@ public class MovieListFragment extends Fragment implements MovieListView {
         movieListAdapter = new MovieListAdapter(movieList, getContext(), pbList);
         rvMovieList.setAdapter(movieListAdapter);
         rvMovieList.setLayoutManager(linearLayoutManager);
-        movieListAdapter.notifyDataSetChanged();
+        movieListAdapter.notifyItemRangeChanged(movieList.size() - popularMovieList.size(), popularMovieList.size());
 
+        rvMovieList.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onGenreMoviesRetrieved(ArrayList<PopularMovie> genreMovieList) {
+        movieList.addAll(genreMovieList);
+
+        movieListAdapter = new MovieListAdapter(movieList, getContext(), pbList);
+        rvMovieList.setAdapter(movieListAdapter);
+        rvMovieList.setLayoutManager(linearLayoutManager);
+        movieListAdapter.notifyItemRangeChanged(movieList.size() - genreMovieList.size(), genreMovieList.size());
+
+        pbList.setVisibility(View.GONE);
         rvMovieList.setVisibility(View.VISIBLE);
     }
 
@@ -124,6 +143,7 @@ public class MovieListFragment extends Fragment implements MovieListView {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
             case R.id.filter_all:
                 pageNumber = 1;
@@ -135,156 +155,190 @@ public class MovieListFragment extends Fragment implements MovieListView {
             case R.id.filter_action:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(ACTION, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(ACTION, pageNumber);
                 flag = ACTION;
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_adventure:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(ADVENTURE, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(ADVENTURE, pageNumber);
                 flag = ADVENTURE;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_animation:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(ANIMATION, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(ANIMATION, pageNumber);
                 flag = ANIMATION;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_comedy:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(COMEDY, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(COMEDY, pageNumber);
                 flag = COMEDY;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_crime:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(CRIME, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(CRIME, pageNumber);
                 flag = CRIME;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_documentary:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(DOCUMENTARY, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(DOCUMENTARY, pageNumber);
                 flag = DOCUMENTARY;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_drama:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(DRAMA, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(DRAMA, pageNumber);
                 flag = DRAMA;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_family:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(FAMILY, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(FAMILY, pageNumber);
                 flag = FAMILY;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_fantasy:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(FANTASY, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(FANTASY, pageNumber);
                 flag = FANTASY;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_history:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(HISTORY, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(HISTORY, pageNumber);
                 flag = HISTORY;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_horror:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(HORROR, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(HORROR, pageNumber);
                 flag = HORROR;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_Music:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(MUSIC, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(MUSIC, pageNumber);
                 flag = MUSIC;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_mystery:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(MYSTERY, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(MYSTERY, pageNumber);
                 flag = MYSTERY;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_romance:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(ROMANCE, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(ROMANCE, pageNumber);
                 flag = ROMANCE;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_sf:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(SF, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(SF, pageNumber);
                 flag = SF;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_tv:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(TV, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(TV, pageNumber);
                 flag = TV;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_thriller:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(THRILLER, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(THRILLER, pageNumber);
                 flag = THRILLER;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_war:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(WAR, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(WAR, pageNumber);
                 flag = WAR;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.filter_western:
                 pageNumber = 1;
                 movieList.clear();
-                movieListPresenter.getMovieListByGenre(WESTERN, movieList,  pageNumber);
+                movieListPresenter.getMovieListByGenre(WESTERN, pageNumber);
                 flag = WESTERN;
-
+                rvMovieList.setVisibility(View.GONE);
+                pbList.setVisibility(View.VISIBLE);
                 break;
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @OnClick(R.id.fab_scroll_to_top)
+    public void scrollToTop() {
+        rvMovieList.setOnScrollListener(null);
+        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(getContext()) {
+            @Override
+            protected int getVerticalSnapPreference() {
+                return LinearSmoothScroller.SNAP_TO_START;
+            }
+        };
+        smoothScroller.setTargetPosition(0);
+        linearLayoutManager.startSmoothScroll(smoothScroller);
+        rvMovieList.setOnScrollListener(scrollListener);
     }
 
     private void recyclerViewListener() {
@@ -302,24 +356,24 @@ public class MovieListFragment extends Fragment implements MovieListView {
 
                 if (dy < 0) {
                     if (firstVisibleItem > visibleItemsCount) {
-                        //// TODO: 11/16/2017 set Scroll To Top Visible
+                        fabScrollToTop.setVisibility(View.VISIBLE);
                     } else {
-                        //// TODO: 11/16/2017 Set Scroll To Top Gone
+                        fabScrollToTop.setVisibility(View.GONE);
                     }
                 } else {
-                    //// TODO: 11/16/2017 Set Scroll To Top Gone
+                    fabScrollToTop.setVisibility(View.GONE);
 
                     if (firstVisibleItem + visibleItemsCount >= totalItemsCount) {
                         pageNumber++;
                         if (flag == ALL) {
                             movieListPresenter.getPopularMovieList(pageNumber);
                         } else {
-//                            movieListPresenter.getMovieListByGenre()
+                            movieListPresenter.getMovieListByGenre(flag, pageNumber);
                         }
                     }
 
                     if (linearLayoutManager.findFirstVisibleItemPosition() < 2) {
-                        //// TODO: 11/16/2017 Set Scroll To Top Gone
+                        fabScrollToTop.setVisibility(View.GONE);
                     }
                 }
             }
