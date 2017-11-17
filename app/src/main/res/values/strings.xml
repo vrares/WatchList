@@ -51,6 +51,7 @@
     <string name="western">Western</string>
     <string name="horror">Horror</string>
     <string name="filter">Filter</string>
+    <string name="search">Search</string>
 
     <string-array name="genre_arrays">
         <item>All</item>

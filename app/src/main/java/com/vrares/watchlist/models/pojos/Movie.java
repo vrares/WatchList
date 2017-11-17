@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class PopularMovie {
+public class Movie {
 
     @SerializedName("vote_count")
     @Expose

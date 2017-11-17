@@ -5,9 +5,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,8 +21,8 @@ import android.widget.ProgressBar;
 import com.vrares.watchlist.MyApplication;
 import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.views.MovieListView;
-import com.vrares.watchlist.models.adapters.MovieListAdapter;
-import com.vrares.watchlist.models.pojos.PopularMovie;
+import com.vrares.watchlist.models.adapters.MovieListMovieListAdapter;
+import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.presenters.classes.MovieListPresenter;
 
 import java.util.ArrayList;
@@ -32,8 +34,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import toothpick.Scope;
 import toothpick.Toothpick;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,6 +60,7 @@ public class MovieListFragment extends Fragment implements MovieListView {
     public static final int THRILLER = 53;
     public static final int WAR = 10752;
     public static final int WESTERN = 37;
+    public static final int SEARCH = 7777;
 
     @Inject MovieListPresenter movieListPresenter;
     @BindView(R.id.pb_popular_movie_list) ProgressBar pbList;
@@ -68,10 +69,11 @@ public class MovieListFragment extends Fragment implements MovieListView {
 
     private int pageNumber;
     private int flag;
+    private String searchQuery;
     private RecyclerView.OnScrollListener scrollListener;
-    private ArrayList<PopularMovie> movieList;
+    private ArrayList<Movie> movieList;
     private Scope scope;
-    private MovieListAdapter movieListAdapter;
+    private MovieListMovieListAdapter movieListAdapter;
     private LinearLayoutManager linearLayoutManager;
 
     public MovieListFragment() {
@@ -111,22 +113,22 @@ public class MovieListFragment extends Fragment implements MovieListView {
     }
 
     @Override
-    public void onPopularMoviesRetrieved(ArrayList<PopularMovie> popularMovieList) {
-        movieList.addAll(popularMovieList);
+    public void onPopularMoviesRetrieved(ArrayList<Movie> movieList) {
+        this.movieList.addAll(movieList);
 
-        movieListAdapter = new MovieListAdapter(movieList, getContext(), pbList);
+        movieListAdapter = new MovieListMovieListAdapter(this.movieList, getContext(), pbList);
         rvMovieList.setAdapter(movieListAdapter);
         rvMovieList.setLayoutManager(linearLayoutManager);
-        movieListAdapter.notifyItemRangeChanged(movieList.size() - popularMovieList.size(), popularMovieList.size());
+        movieListAdapter.notifyItemRangeChanged(this.movieList.size() - movieList.size(), movieList.size());
 
         rvMovieList.setVisibility(View.VISIBLE);
     }
 
     @Override
-    public void onGenreMoviesRetrieved(ArrayList<PopularMovie> genreMovieList) {
+    public void onGenreMoviesRetrieved(ArrayList<Movie> genreMovieList) {
         movieList.addAll(genreMovieList);
 
-        movieListAdapter = new MovieListAdapter(movieList, getContext(), pbList);
+        movieListAdapter = new MovieListMovieListAdapter(movieList, getContext(), pbList);
         rvMovieList.setAdapter(movieListAdapter);
         rvMovieList.setLayoutManager(linearLayoutManager);
         movieListAdapter.notifyItemRangeChanged(movieList.size() - genreMovieList.size(), genreMovieList.size());
@@ -136,8 +138,43 @@ public class MovieListFragment extends Fragment implements MovieListView {
     }
 
     @Override
+    public void onSearchMoviesRetrieved(ArrayList<Movie> movieList) {
+        this.movieList.addAll(movieList);
+
+        movieListAdapter = new MovieListMovieListAdapter(this.movieList, getContext(), pbList);
+        rvMovieList.setAdapter(movieListAdapter);
+        rvMovieList.setLayoutManager(linearLayoutManager);
+        movieListAdapter.notifyItemRangeChanged(this.movieList.size() - movieList.size(), movieList.size());
+
+        rvMovieList.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.movie_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchQuery = query.replace(" ", "+");
+                pbList.setVisibility(View.VISIBLE);
+                rvMovieList.setVisibility(View.GONE);
+                pageNumber = 1;
+                flag = SEARCH;
+                movieList.clear();
+                movieListPresenter.searchMovie(searchQuery, pageNumber);
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return true;
+            }
+        });
         inflater.inflate(R.menu.movie_filters, menu);
     }
 
@@ -367,6 +404,8 @@ public class MovieListFragment extends Fragment implements MovieListView {
                         pageNumber++;
                         if (flag == ALL) {
                             movieListPresenter.getPopularMovieList(pageNumber);
+                        } else if (flag == SEARCH) {
+                            movieListPresenter.searchMovie(searchQuery, pageNumber);
                         } else {
                             movieListPresenter.getMovieListByGenre(flag, pageNumber);
                         }

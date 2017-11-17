@@ -2,7 +2,7 @@ package com.vrares.watchlist.presenters.classes;
 
 import com.vrares.watchlist.android.helpers.RetrofitHelper;
 import com.vrares.watchlist.android.views.MovieListView;
-import com.vrares.watchlist.models.pojos.PopularMovie;
+import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.presenters.callbacks.MovieListPresenterCallback;
 
 import java.util.ArrayList;
@@ -28,16 +28,25 @@ public class MovieListPresenter implements MovieListPresenterCallback {
     }
 
     @Override
-    public void onPopularMoviesRetrieved(ArrayList<PopularMovie> popularMovieList) {
-        movieListView.onPopularMoviesRetrieved(popularMovieList);
+    public void onPopularMoviesRetrieved(ArrayList<Movie> movieList) {
+        movieListView.onPopularMoviesRetrieved(movieList);
     }
 
     @Override
-    public void onGenreMoviesRetrieved(ArrayList<PopularMovie> movieList) {
+    public void onGenreMoviesRetrieved(ArrayList<Movie> movieList) {
         movieListView.onGenreMoviesRetrieved(movieList);
+    }
+
+    @Override
+    public void onSearchMoviesRetrieved(ArrayList<Movie> movieList) {
+        movieListView.onSearchMoviesRetrieved(movieList);
     }
 
     public void getMovieListByGenre(int genre, int pageNumber) {
         retrofitHelper.getMovieListByGenre(genre, pageNumber, this);
+    }
+
+    public void searchMovie(String query, int pageNumber) {
+        retrofitHelper.searchMovie(query, pageNumber, this);
     }
 }

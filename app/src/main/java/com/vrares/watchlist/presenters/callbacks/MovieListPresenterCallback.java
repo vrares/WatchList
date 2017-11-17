@@ -1,12 +1,13 @@
 package com.vrares.watchlist.presenters.callbacks;
 
-import com.vrares.watchlist.models.pojos.PopularMovie;
+import com.vrares.watchlist.models.pojos.Movie;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public interface MovieListPresenterCallback {
-    void onPopularMoviesRetrieved(ArrayList<PopularMovie> popularMovieList);
+    void onPopularMoviesRetrieved(ArrayList<Movie> movieList);
 
-    void onGenreMoviesRetrieved(ArrayList<PopularMovie> movieList);
+    void onGenreMoviesRetrieved(ArrayList<Movie> movieList);
+
+    void onSearchMoviesRetrieved(ArrayList<Movie> movieList);
 }

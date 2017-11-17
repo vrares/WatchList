@@ -1,6 +1,6 @@
 package com.vrares.watchlist.android.helpers;
 
-import com.vrares.watchlist.models.pojos.PopularMovieList;
+import com.vrares.watchlist.models.pojos.MovieList;
 
 import java.util.Map;
 
@@ -13,11 +13,15 @@ public interface TmdbClient {
 
     String POPULAR_LIST = "/3/movie/popular";
     String GENRE_LIST = "/3/genre/";
+    String SEARCH_LIST = "/3/search/movie";
 
     @GET(POPULAR_LIST)
-    Call<PopularMovieList> getPopularMovieList(@QueryMap Map<String, String> filters);
+    Call<MovieList> getPopularMovieList(@QueryMap Map<String, String> filters);
 
     @GET(GENRE_LIST + "{genre}/movies")
-    Call<PopularMovieList> getGenreMovieList(@Path("genre") String genre, @QueryMap Map<String, String> filters);
+    Call<MovieList> getGenreMovieList(@Path("genre") String genre, @QueryMap Map<String, String> filters);
+
+    @GET(SEARCH_LIST)
+    Call<MovieList> getSearachList(@QueryMap Map<String, String> filters);
 
 }
