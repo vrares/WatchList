@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context="com.vrares.watchlist.android.activities.MovieDetailsActivity">
+
+        <ProgressBar
+            android:id="@+id/pb_movie_details"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="70dp"
+            android:layout_height="wrap_content"
+            android:visibility="visible"/>
+
+        <ImageView
+            android:id="@+id/iv_movie_banner"
+            android:layout_width="match_parent"
+            android:layout_height="202dp"
+            android:layout_marginBottom="10dp"/>
+
+        <ImageView
+            android:id="@+id/iv_movie_poster"
+            android:layout_below="@id/iv_movie_banner"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="50dp"
+            android:layout_width="120dp"
+            android:layout_height="170dp" />
+
+        <TextView
+            android:id="@+id/tv_movie_title"
+            android:layout_below="@id/iv_movie_banner"
+            android:layout_toEndOf="@id/iv_movie_poster"
+            android:layout_marginStart="0dp"
+            tools:text="Minions"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_below="@id/iv_movie_banner"
+            android:layout_marginStart="35dp"
+            android:layout_toEndOf="@id/tv_movie_title"
+            android:src="@drawable/ic_heart"
+            android:id="@+id/fab_fav_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/iv_rating"
+            android:layout_below="@id/tv_movie_title"
+            android:layout_marginTop="2dp"
+            android:layout_toEndOf="@id/iv_movie_poster"
+            android:background="@drawable/ic_star"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/tv_rating"
+            android:layout_below="@id/tv_movie_title"
+            android:layout_toEndOf="@id/iv_rating"
+            tools:text="26/12"
+            android:paddingTop="3dp"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/iv_votes"
+            android:layout_below="@id/iv_rating"
+            android:layout_marginTop="2dp"
+            android:layout_toEndOf="@id/iv_movie_poster"
+            android:background="@drawable/ic_report_card"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/tv_votes"
+            android:layout_below="@id/tv_rating"
+            android:layout_toEndOf="@id/iv_rating"
+            tools:text="12875"
+            android:paddingTop="3dp"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/iv_views"
+            android:layout_below="@id/iv_votes"
+            android:layout_marginTop="2dp"
+            android:layout_toEndOf="@id/iv_movie_poster"
+            android:background="@drawable/btn_seen"
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+        <TextView
+            android:id="@+id/tv_views"
+            android:layout_below="@id/tv_votes"
+            android:layout_toEndOf="@id/iv_rating"
+            tools:text="4 watchers"
+            android:paddingTop="3dp"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:id="@+id/iv_language"
+            android:layout_below="@id/iv_views"
+            android:layout_marginTop="3dp"
+            android:layout_marginStart="2dp"
+            android:layout_toEndOf="@id/iv_movie_poster"
+            android:background="@drawable/ic_globe"
+            android:layout_width="18dp"
+            android:layout_height="18dp" />
+
+        <TextView
+            android:id="@+id/tv_language"
+            android:layout_below="@id/tv_views"
+            android:layout_toEndOf="@id/iv_rating"
+            tools:text="en"
+            android:paddingTop="3dp"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btn_other_watchers"
+            android:text="@string/other_watchers"
+            android:background="@drawable/bg_button"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/tv_language"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="75dp"
+            android:layout_width="143dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btn_more_details"
+            android:text="@string/more_details"
+            android:background="@drawable/bg_button"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/btn_other_watchers"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="75dp"
+            android:layout_width="143dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_overview_title"
+            android:text="@string/overview"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="5dp"
+            android:layout_below="@id/btn_more_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_overview"
+            android:layout_below="@id/tv_overview_title"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+
+
+</ScrollView>

@@ -52,6 +52,10 @@
     <string name="horror">Horror</string>
     <string name="filter">Filter</string>
     <string name="search">Search</string>
+    <string name="other_watchers">Other Watchers</string>
+    <string name="more_details">More Details</string>
+    <string name="overview">Overview</string>
+    <string name="share">Share</string>
 
     <string-array name="genre_arrays">
         <item>All</item>

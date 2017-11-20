@@ -17,6 +17,7 @@ import com.vrares.watchlist.models.adapters.MovieListMovieListAdapter;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.models.pojos.User;
 import com.vrares.watchlist.presenters.callbacks.LoginPresenterCallback;
+import com.vrares.watchlist.presenters.callbacks.MovieDetailsPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.RegisterPresenterCallback;
 
 import java.text.SimpleDateFormat;
@@ -39,6 +40,7 @@ public class DatabaseHelper {
     private RegisterPresenterCallback registerPresenterCallback;
     private LoginPresenterCallback loginPresenterCallback;
     private MovieListAdapterCallback movieListAdapterCallback;
+    private MovieDetailsPresenterCallback movieDetailsPresenterCallback;
 
     private DatabaseReference ref;
     private FirebaseAuth auth;
@@ -190,6 +192,30 @@ public class DatabaseHelper {
                     seenCount = seenCount - 1;
                     ref.child(movieId).child(SEEN_COUNT).setValue(seenCount);
                 }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getSeenCount(final Movie movie, MovieDetailsPresenterCallback movieDetailsCallback) {
+        this.movieDetailsPresenterCallback = movieDetailsCallback;
+        ref = FirebaseDatabase.getInstance().getReference(MOVIES_NODE);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String seenCount;
+                if (dataSnapshot.hasChild(String.valueOf(movie.getId()))) {
+                    seenCount = dataSnapshot.child(String.valueOf(movie.getId())).child(SEEN_COUNT).getValue().toString();
+                } else {
+                    seenCount = "0";
+                }
+
+                movieDetailsPresenterCallback.onSeenCountReceived(seenCount);
+
             }
 
             @Override

@@ -2,6 +2,7 @@ package com.vrares.watchlist.android.helpers;
 
 import android.util.Log;
 
+import com.vrares.watchlist.android.activities.MovieDetailsActivity;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.models.pojos.MovieList;
 import com.vrares.watchlist.presenters.callbacks.MovieListPresenterCallback;
@@ -41,7 +42,9 @@ public class RetrofitHelper {
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+
     }
+
 
     public void getPopularMovieList(int pageNumber, MovieListPresenterCallback movieListCallback) {
         this.movieListPresenterCallback = movieListCallback;

@@ -2,6 +2,7 @@ package com.vrares.watchlist.models.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.vrares.watchlist.R;
+import com.vrares.watchlist.android.activities.Henson;
 import com.vrares.watchlist.android.helpers.DatabaseHelper;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.models.utils.ProgressDialogUtil;
@@ -30,7 +32,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MovieListMovieListAdapter extends RecyclerView.Adapter<MovieListMovieListAdapter.MyViewHolder> implements MovieListAdapterCallback {
 
-    private static final String POSTER_URL = "http://image.tmdb.org/t/p/";
+    public static final String POSTER_URL = "http://image.tmdb.org/t/p/";
     private static final String LOGO_W45 = "w45/";
 
     private DatabaseHelper databaseHelper = new DatabaseHelper();
@@ -81,6 +83,17 @@ public class MovieListMovieListAdapter extends RecyclerView.Adapter<MovieListMov
                     });
                 }
                 holder.buttonItem.setBackgroundResource(R.drawable.btn_seen);
+            }
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = Henson.with(context)
+                        .gotoMovieDetailsActivity()
+                        .movie(movie)
+                        .build();
+                context.startActivity(intent);
             }
         });
 
