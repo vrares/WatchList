@@ -16,4 +16,6 @@ public interface LoginPresenterCallback {
     void onFacebookLoginFailure(Exception e);
 
     void onFacebookLoginSuccess(User user);
+
+    void onUserDetailsRetrieved(User user);
 }

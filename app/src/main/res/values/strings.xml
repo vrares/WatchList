@@ -56,6 +56,8 @@
     <string name="more_details">More Details</string>
     <string name="overview">Overview</string>
     <string name="share">Share</string>
+    <string name="please_type_your_password_to_confirm_your_changes">Please type your password to confirm your changes</string>
+    <string name="save_changes">Save Changes</string>
 
     <string-array name="genre_arrays">
         <item>All</item>

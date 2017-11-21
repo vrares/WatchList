@@ -1,13 +1,49 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.vrares.watchlist.android.fragments.UserDetailsFragment">
+    tools:context="com.vrares.watchlist.android.fragments.UserDetailsFragment"
+    android:layout_margin="15dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/edit_picture"
+        android:layout_centerHorizontal="true"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_marginBottom="20dp"/>
+
+    <EditText
+        android:id="@+id/edit_et_name"
+        android:layout_below="@id/edit_picture"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="User Details" />
+        android:layout_height="wrap_content" />
 
-</FrameLayout>
+    <TextView
+        android:labelFor="@id/edit_et_pass"
+        android:id="@+id/tv_confirm"
+        android:text="@string/please_type_your_password_to_confirm_your_changes"
+        android:layout_below="@id/edit_et_name"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginTop="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:inputType="textPassword"
+        android:id="@+id/edit_et_pass"
+        android:layout_below="@id/tv_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/edit_btn_save"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/save_changes"
+        android:padding="5dp"
+        android:background="@drawable/bg_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

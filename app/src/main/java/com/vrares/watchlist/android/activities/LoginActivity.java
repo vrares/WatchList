@@ -1,6 +1,7 @@
 package com.vrares.watchlist.android.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.vrares.watchlist.MyApplication;
 import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.views.LoginView;
+import com.vrares.watchlist.models.pojos.User;
 import com.vrares.watchlist.models.utils.ProgressDialogUtil;
 import com.vrares.watchlist.presenters.classes.LoginPresenter;
 
@@ -44,6 +46,11 @@ public class LoginActivity extends AppCompatActivity implements LoginView, Googl
 
     private static final String LOGING_IN_MESSAGE = "Loging in...";
     private static final int GOOGLE_SIGN_IN = 9001;
+    public static final String SHARED_PREF = "sharedPref";
+    public static final String EMAIL_PREF =  "emailPref";
+    public static final String FIRST_NAME_PREF = "firstNamePref";
+    public static final String LAST_NAME_PREF = "lastNamePref";
+    public static final String PICTURE_PREF = "picturePref";
 
     @BindView(R.id.login_et_email) EditText etEmail;
     @BindView(R.id.login_et_password) EditText etPassword;
@@ -59,6 +66,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView, Googl
     private GoogleApiClient googleApiClient;
     private ProgressDialogUtil progressDialogUtil;
     private CallbackManager callbackManager;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,9 +165,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView, Googl
 
     @Override
     public void onSignInSuccess() {
-        progressDialogUtil.dismiss();
-        Intent intent = new Intent(this, NavigationActivity.class);
-        startActivity(intent);
+        loginPresenter.getUserDetails(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
     }
 
     @Override
@@ -178,6 +185,20 @@ public class LoginActivity extends AppCompatActivity implements LoginView, Googl
     public void onFacebookLoginFailure(Exception e) {
         progressDialogUtil.dismiss();
         Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onUserDetailsRetrieved(User user) {
+        sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        sharedPreferences.edit()
+                .putString(EMAIL_PREF, user.getEmail())
+                .putString(FIRST_NAME_PREF, user.getFirstName())
+                .putString(LAST_NAME_PREF, user.getLastName())
+                .putString(PICTURE_PREF, user.getPicture())
+                .apply();
+        progressDialogUtil.dismiss();
+        Intent intent = new Intent(this, NavigationActivity.class);
+        startActivity(intent);
     }
 
     @Override

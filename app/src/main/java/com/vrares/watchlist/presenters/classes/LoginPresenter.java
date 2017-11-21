@@ -62,6 +62,11 @@ public class LoginPresenter implements LoginPresenterCallback {
         databaseHelper.insertUserIntoDatabase(user, null, this);
     }
 
+    @Override
+    public void onUserDetailsRetrieved(User user) {
+        loginView.onUserDetailsRetrieved(user);
+    }
+
     public void firebaseLogin(String email, String password) {
         connectivityHelper.firebaseLogin(email, password, this);
     }
@@ -73,5 +78,9 @@ public class LoginPresenter implements LoginPresenterCallback {
 
     public void facebookLogin(LoginResult loginResult) {
         connectivityHelper.facebookLogin(loginResult, this);
+    }
+
+    public void getUserDetails(String uid) {
+        databaseHelper.getUserDetails(uid, this);
     }
 }

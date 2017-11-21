@@ -36,6 +36,10 @@ public class DatabaseHelper {
     private static final String FULL_NAME_NODE = "fullname";
     private static final String TIME  = "time";
     private static final String TAG = "Error";
+    private static final String EMAIL_NODE = "email";
+    private static final String FIRST_NAME_NODE = "firstName";
+    private static final String LAST_NAME_NODE = "lastName";
+    private static final String PICTURE_NODE = "picture";
 
     private RegisterPresenterCallback registerPresenterCallback;
     private LoginPresenterCallback loginPresenterCallback;
@@ -216,6 +220,27 @@ public class DatabaseHelper {
 
                 movieDetailsPresenterCallback.onSeenCountReceived(seenCount);
 
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void getUserDetails(final String uid, LoginPresenterCallback loginCallback) {
+        this.loginPresenterCallback= loginCallback;
+        ref = FirebaseDatabase.getInstance().getReference(USERS_NODE);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String email = dataSnapshot.child(uid).child(EMAIL_NODE).getValue().toString();
+                String firstName = dataSnapshot.child(uid).child(FIRST_NAME_NODE).getValue().toString();
+                String lastName = dataSnapshot.child(uid).child(LAST_NAME_NODE).getValue().toString();
+                String picture = dataSnapshot.child(uid).child(PICTURE_NODE).getValue().toString();
+                User user = new User(firstName, lastName,email,picture);
+                loginPresenterCallback.onUserDetailsRetrieved(user);
             }
 
             @Override
