@@ -19,6 +19,7 @@ import com.vrares.watchlist.models.pojos.User;
 import com.vrares.watchlist.presenters.callbacks.LoginPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.MovieDetailsPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.RegisterPresenterCallback;
+import com.vrares.watchlist.presenters.callbacks.UserDetailsPresenterCallback;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -45,25 +46,36 @@ public class DatabaseHelper {
     private LoginPresenterCallback loginPresenterCallback;
     private MovieListAdapterCallback movieListAdapterCallback;
     private MovieDetailsPresenterCallback movieDetailsPresenterCallback;
+    private UserDetailsPresenterCallback userDetailsPresenterCallback;
 
     private DatabaseReference ref;
     private FirebaseAuth auth;
 
-    public void insertUserIntoDatabase(final User user, final RegisterPresenterCallback registerCallback, final LoginPresenterCallback  loginCallback) {
+    public void insertUserIntoDatabase(final User user, final RegisterPresenterCallback registerCallback, final LoginPresenterCallback  loginCallback, final UserDetailsPresenterCallback userDetailsCallback) {
         this.registerPresenterCallback = registerCallback;
         this.loginPresenterCallback = loginCallback;
+        this.userDetailsPresenterCallback = userDetailsCallback;
+
         ref = FirebaseDatabase.getInstance().getReference(USERS_NODE);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 auth = FirebaseAuth.getInstance();
-                if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
+
+                if (userDetailsPresenterCallback != null) {
                     ref.child(auth.getCurrentUser().getUid()).setValue(user);
-                }
-                if (loginPresenterCallback == null) {
-                    registerPresenterCallback.onUserInsertedSuccess();
+                    userDetailsPresenterCallback.onUserInsertedSuccess();
+
                 } else {
-                    loginPresenterCallback.onUserInsertedSuccess();
+
+                    if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
+                        ref.child(auth.getCurrentUser().getUid()).setValue(user);
+                    }
+                    if (loginPresenterCallback != null) {
+                        loginPresenterCallback.onUserInsertedSuccess();
+                    } else if (registerPresenterCallback != null) {
+                        registerPresenterCallback.onUserInsertedSuccess();
+                    }
                 }
             }
 
@@ -232,7 +244,7 @@ public class DatabaseHelper {
     public void getUserDetails(final String uid, LoginPresenterCallback loginCallback) {
         this.loginPresenterCallback= loginCallback;
         ref = FirebaseDatabase.getInstance().getReference(USERS_NODE);
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String email = dataSnapshot.child(uid).child(EMAIL_NODE).getValue().toString();

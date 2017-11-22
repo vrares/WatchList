@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -18,6 +19,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.vrares.watchlist.models.pojos.User;
 import com.vrares.watchlist.presenters.callbacks.LoginPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.RegisterPresenterCallback;
+import com.vrares.watchlist.presenters.callbacks.UserDetailsPresenterCallback;
+import com.vrares.watchlist.presenters.classes.UserDetailsPresenter;
 
 import javax.inject.Singleton;
 
@@ -29,6 +32,7 @@ public class ConnectivityHelper {
     private FirebaseAuth auth;
     private RegisterPresenterCallback registerPresenterCallback;
     private LoginPresenterCallback loginPresenterCallback;
+    private UserDetailsPresenterCallback userDetailsPresenterCallback;
 
     public void register(final User user, String password, RegisterPresenterCallback registerCallback) {
         this.registerPresenterCallback = registerCallback;
@@ -132,6 +136,30 @@ public class ConnectivityHelper {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         loginPresenterCallback.onFacebookLoginFailure(e);
+                    }
+                });
+    }
+
+    public void updateData(String pass, UserDetailsPresenterCallback userDetailsCallback, final User newUser) {
+        this.userDetailsPresenterCallback = userDetailsCallback;
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), pass);
+
+        currentUser.reauthenticate(credential)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            userDetailsPresenterCallback.onPasswordValidated(newUser);
+                        } else {
+                            userDetailsPresenterCallback.onPasswordValidationFailed(task.getException());
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        userDetailsPresenterCallback.onPasswordValidationFailed(e);
                     }
                 });
     }

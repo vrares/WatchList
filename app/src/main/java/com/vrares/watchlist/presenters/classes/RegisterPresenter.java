@@ -29,7 +29,7 @@ public class RegisterPresenter implements RegisterPresenterCallback{
 
     @Override
     public void onAccountCreated(User user) {
-        databaseHelper.insertUserIntoDatabase(user, this, null);
+        databaseHelper.insertUserIntoDatabase(user, this, null, null);
     }
 
     @Override

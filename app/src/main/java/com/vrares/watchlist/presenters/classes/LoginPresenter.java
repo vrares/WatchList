@@ -39,7 +39,7 @@ public class LoginPresenter implements LoginPresenterCallback {
 
     @Override
     public void onGoogleLoginSuccess(User user) {
-        databaseHelper.insertUserIntoDatabase(user, null, this);
+        databaseHelper.insertUserIntoDatabase(user, null, this, null);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class LoginPresenter implements LoginPresenterCallback {
 
     @Override
     public void onFacebookLoginSuccess(User user) {
-        databaseHelper.insertUserIntoDatabase(user, null, this);
+        databaseHelper.insertUserIntoDatabase(user, null, this, null);
     }
 
     @Override
