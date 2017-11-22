@@ -19,8 +19,7 @@ import static com.vrares.watchlist.android.activities.LoginActivity.SHARED_PREF;
 
 public class SplashActivity extends AppCompatActivity implements SplashView {
 
-    @Inject
-    private RetrofitHelper retrofitHelper;
+    @Inject RetrofitHelper retrofitHelper;
     private SplashView splashView = this;
     private SharedPreferences sharedPreferences;
 

@@ -18,7 +18,6 @@ import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.activities.Henson;
 import com.vrares.watchlist.android.helpers.DatabaseHelper;
 import com.vrares.watchlist.models.pojos.Movie;
-import com.vrares.watchlist.models.utils.ProgressDialogUtil;
 
 import java.util.ArrayList;
 
