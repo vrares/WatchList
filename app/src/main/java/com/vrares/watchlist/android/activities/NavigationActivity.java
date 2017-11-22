@@ -17,6 +17,7 @@ import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.vrares.watchlist.R;
+import com.vrares.watchlist.android.fragments.HitListFragment;
 import com.vrares.watchlist.android.fragments.MovieListFragment;
 import com.vrares.watchlist.android.fragments.UserDetailsFragment;
 
@@ -75,6 +76,10 @@ public class NavigationActivity extends AppCompatActivity
         } else if (id == R.id.nav_favourite_list) {
 
         } else if (id == R.id.nav_hit_list) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, new HitListFragment())
+                    .commit();
 
         } else if (id == R.id.nav_friends) {
 

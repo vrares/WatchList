@@ -2,9 +2,10 @@ package com.vrares.watchlist.android.helpers;
 
 import android.util.Log;
 
-import com.vrares.watchlist.android.activities.MovieDetailsActivity;
+import com.vrares.watchlist.android.views.SplashView;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.models.pojos.MovieList;
+import com.vrares.watchlist.models.pojos.Session;
 import com.vrares.watchlist.presenters.callbacks.MovieListPresenterCallback;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class RetrofitHelper {
 
     private static final String TAG = "Error";
     private static final String BASE_URL = "https://api.themoviedb.org/";
-    private static final String API_KEY_TAG = "api_key";
+    public static final String API_KEY_TAG = "api_key";
     private static final String API_KEY = "3923714031c68cb13bffea56cc6a9430";
     private static final String LANGUAGE_TAG = "language";
     private static final String LANGUAGE = "en-US";
@@ -36,6 +37,7 @@ public class RetrofitHelper {
     private static final String QUERY_TAG = "query";
 
     private MovieListPresenterCallback movieListPresenterCallback;
+    private SplashView splashView;
 
     private static Retrofit getRetrofitInstance() {
         return new Retrofit.Builder()
@@ -113,7 +115,7 @@ public class RetrofitHelper {
         data.put(QUERY_TAG, query);
         data.put(PAGE_TAG, String.valueOf(pageNumber));
 
-        Call<MovieList> call = tmdbClient.getSearachList(data);
+        Call<MovieList> call = tmdbClient.getSearchList(data);
         call.enqueue(new Callback<MovieList>() {
             @Override
             public void onResponse(Call<MovieList> call, Response<MovieList> response) {
@@ -127,6 +129,32 @@ public class RetrofitHelper {
 
             @Override
             public void onFailure(Call<MovieList> call, Throwable t) {
+                Log.d(TAG, t.getMessage());
+            }
+        });
+    }
+
+    public void createSession(final SplashView splashCallback) {
+        this.splashView = splashCallback;
+        TmdbClient tmdbClient = getRetrofitInstance().create(TmdbClient.class);
+
+        Call<Session> call = tmdbClient.createSession(API_KEY);
+        call.enqueue(new Callback<Session>() {
+            @Override
+            public void onResponse(Call<Session> call, Response<Session> response) {
+                if (response.isSuccessful()) {
+                    Session session = new Session();
+                    session.setSuccess(response.body().getSuccess());
+                    session.setGuestSessionId(response.body().getGuestSessionId());
+                    session.setExpiresAt(response.body().getExpiresAt());
+                    splashCallback.onSessionCreated(session);
+                } else {
+                    Log.d(TAG, response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Session> call, Throwable t) {
                 Log.d(TAG, t.getMessage());
             }
         });

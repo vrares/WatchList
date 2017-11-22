@@ -95,7 +95,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
     public void onUserInsertedSuccess() {
         progressDialogUtil.dismiss();
         Toast.makeText(this, "User created with success", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, NavigationActivity.class);
+        Intent intent = new Intent(this, SplashActivity.class);
         startActivity(intent);
     }
 }

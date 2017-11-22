@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView, Googl
     private static final String LOGING_IN_MESSAGE = "Loging in...";
     private static final int GOOGLE_SIGN_IN = 9001;
     public static final String SHARED_PREF = "sharedPref";
+    public static final String SESSION_PREF = "sessionPref";
     public static final String EMAIL_PREF =  "emailPref";
     public static final String FIRST_NAME_PREF = "firstNamePref";
     public static final String LAST_NAME_PREF = "lastNamePref";
@@ -197,7 +198,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView, Googl
                 .putString(PICTURE_PREF, user.getPicture())
                 .apply();
         progressDialogUtil.dismiss();
-        Intent intent = new Intent(this, NavigationActivity.class);
+        Intent intent = new Intent(this, SplashActivity.class);
         startActivity(intent);
     }
 

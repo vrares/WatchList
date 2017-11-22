@@ -58,6 +58,8 @@
     <string name="share">Share</string>
     <string name="please_type_your_password_to_confirm_your_changes">Please type your password to confirm your changes</string>
     <string name="save_changes">Save Changes</string>
+    <string name="your_hit_list">Your Hit-List</string>
+    <string name="s_hit_list">\'s Hit-List</string>
 
     <string-array name="genre_arrays">
         <item>All</item>
