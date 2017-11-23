@@ -152,7 +152,7 @@ public class MovieListFragment extends Fragment implements MovieListView {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.movie_search, menu);
+        inflater.inflate(R.menu.menu_search, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
 
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
@@ -175,7 +175,7 @@ public class MovieListFragment extends Fragment implements MovieListView {
                 return true;
             }
         });
-        inflater.inflate(R.menu.movie_filters, menu);
+        inflater.inflate(R.menu.menu_filter, menu);
     }
 
     @Override

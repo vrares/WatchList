@@ -2,6 +2,7 @@ package com.vrares.watchlist.android.fragments;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,13 +16,11 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
 import com.vrares.watchlist.MyApplication;
 import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.views.UserDetailsView;
 import com.vrares.watchlist.models.pojos.User;
 import com.vrares.watchlist.models.utils.AlertDialogUtil;
-import com.vrares.watchlist.presenters.callbacks.UserDetailsPresenterCallback;
 import com.vrares.watchlist.presenters.classes.UserDetailsPresenter;
 
 import javax.inject.Inject;
@@ -33,6 +32,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import toothpick.Scope;
 import toothpick.Toothpick;
 
+import static android.app.Activity.RESULT_OK;
 import static com.vrares.watchlist.android.activities.LoginActivity.EMAIL_PREF;
 import static com.vrares.watchlist.android.activities.LoginActivity.FIRST_NAME_PREF;
 import static com.vrares.watchlist.android.activities.LoginActivity.LAST_NAME_PREF;
@@ -42,23 +42,29 @@ import static com.vrares.watchlist.android.activities.LoginActivity.SHARED_PREF;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserDetailsFragment extends Fragment implements UserDetailsView{
+public class UserDetailsFragment extends Fragment implements UserDetailsView {
 
-    private static final String PICTURE_GENERATOR_LINK = "https://api.adorable.io/avatars/180/";
-    private static final String PICTURE_GENERATION_EXTENSION = ".png";
+    public static final int GALLERY_CODE = 1;
 
-
-    @Inject UserDetailsPresenter userDetailsPresenter;
-    @BindView(R.id.edit_picture)CircleImageView civPicture;
-    @BindView(R.id.edit_et_name)EditText etName;
-    @BindView(R.id.edit_et_pass)EditText etPass;
-    @BindView(R.id.edit_btn_save)Button btnSave;
-    @BindView(R.id.edit_pb)ProgressBar pbLoad;
+    @Inject
+    UserDetailsPresenter userDetailsPresenter;
+    @BindView(R.id.edit_picture)
+    CircleImageView civPicture;
+    @BindView(R.id.edit_et_name)
+    EditText etName;
+    @BindView(R.id.edit_et_pass)
+    EditText etPass;
+    @BindView(R.id.edit_btn_save)
+    Button btnSave;
+    @BindView(R.id.edit_pb)
+    ProgressBar pbLoad;
 
     private Scope scope;
     private User user;
     private User newUser;
     private SharedPreferences sharedPreferences;
+    private String picturePath;
+    private boolean isPictureChanged;
 
     public UserDetailsFragment() {
         // Required empty public constructor
@@ -76,6 +82,7 @@ public class UserDetailsFragment extends Fragment implements UserDetailsView{
     }
 
     private void initViews() {
+        isPictureChanged = false;
         user = new User();
         sharedPreferences = getActivity().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
         user.setEmail(sharedPreferences.getString(EMAIL_PREF, null));
@@ -83,7 +90,7 @@ public class UserDetailsFragment extends Fragment implements UserDetailsView{
         user.setLastName(sharedPreferences.getString(LAST_NAME_PREF, null));
         user.setPicture(sharedPreferences.getString(PICTURE_PREF, null));
         Glide.with(this)
-                .load(PICTURE_GENERATOR_LINK + user.getEmail() + PICTURE_GENERATION_EXTENSION)
+                .load(sharedPreferences.getString(PICTURE_PREF, null))
                 .into(civPicture);
         etName.setText(user.getFullname());
 
@@ -94,15 +101,33 @@ public class UserDetailsFragment extends Fragment implements UserDetailsView{
     public void updateData() {
         String userName = etName.getText().toString();
         String[] userNameSplitted = userName.split(" ");
-        newUser = new User(userNameSplitted[0], userNameSplitted[1], FirebaseAuth.getInstance().getCurrentUser().getEmail(), "default");
+        if (!isPictureChanged) {
+            newUser = new User(userNameSplitted[0], userNameSplitted[1], user.getEmail(), user.getPicture());
+        } else {
+            newUser = new User(userNameSplitted[0], userNameSplitted[1], user.getEmail(), picturePath);
+        }
         pbLoad.setVisibility(View.VISIBLE);
         btnSave.setVisibility(View.GONE);
-        if (etPass.getText().toString().isEmpty()) {
-            Toast.makeText(getActivity(), "Please insert your password for confirmation", Toast.LENGTH_SHORT).show();
-            pbLoad.setVisibility(View.GONE);
-            btnSave.setVisibility(View.VISIBLE);
-        } else {
-            userDetailsPresenter.updateData(etPass.getText().toString(), newUser);
+        userDetailsPresenter.updateData(etPass.getText().toString(), newUser);
+    }
+
+    @OnClick(R.id.edit_picture)
+    public void changeProfilePicture() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "SELECT IMAGE"), GALLERY_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == GALLERY_CODE && resultCode == RESULT_OK) {
+            picturePath = data.getData().toString();
+            Glide.with(this)
+                    .load(picturePath)
+                    .into(civPicture);
         }
     }
 

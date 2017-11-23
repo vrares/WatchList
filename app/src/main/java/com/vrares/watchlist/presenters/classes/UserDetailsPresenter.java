@@ -1,5 +1,8 @@
 package com.vrares.watchlist.presenters.classes;
 
+import android.content.Context;
+import android.content.Intent;
+
 import com.vrares.watchlist.android.helpers.ConnectivityHelper;
 import com.vrares.watchlist.android.helpers.DatabaseHelper;
 import com.vrares.watchlist.android.views.UserDetailsView;
@@ -23,7 +26,8 @@ public class UserDetailsPresenter implements UserDetailsPresenterCallback{
     }
 
     public void updateData(String pass, User newUser) {
-        connectivityHelper.updateData(pass, this, newUser);
+        databaseHelper.insertUserIntoDatabase(newUser, null, null, this);
+
     }
 
     @Override
@@ -33,7 +37,6 @@ public class UserDetailsPresenter implements UserDetailsPresenterCallback{
 
     @Override
     public void onPasswordValidated(User newUser) {
-        databaseHelper.insertUserIntoDatabase(newUser, null, null, this);
     }
 
     @Override

@@ -23,6 +23,7 @@ import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.fragments.HitListFragment;
 import com.vrares.watchlist.android.fragments.MovieListFragment;
 import com.vrares.watchlist.android.fragments.UserDetailsFragment;
+import com.vrares.watchlist.android.fragments.UserSearchFragment;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -116,6 +117,10 @@ public class NavigationActivity extends AppCompatActivity
         } else if (id == R.id.nav_friends) {
 
         } else if (id == R.id.nav_user_search) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, new UserSearchFragment())
+                    .commit();
 
         } else if (id == R.id.nav_sign_out) {
             FirebaseAuth.getInstance().signOut();

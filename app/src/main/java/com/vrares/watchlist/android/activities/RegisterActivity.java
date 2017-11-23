@@ -25,7 +25,8 @@ import toothpick.Toothpick;
 
 public class RegisterActivity extends AppCompatActivity implements RegisterView{
 
-    private static final String DEFAULT_PICTURE = "default";
+    private static final String PICTURE_GENERATOR_LINK = "https://api.adorable.io/avatars/180/";
+    private static final String PICTURE_GENERATION_EXTENSION = ".png";
     private static final String REGISTERING_MESSAGE = "Registering...";
 
     @BindView(R.id.register_et_first_name)EditText firstName;
@@ -78,7 +79,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
             User user = new User(firstName.getText().toString(),
                     lastName.getText().toString(),
                     email.getText().toString(),
-                    DEFAULT_PICTURE);
+                    PICTURE_GENERATOR_LINK + email.getText().toString() + PICTURE_GENERATION_EXTENSION);
 
             registerPresenter.register(user, password.getText().toString());
         }

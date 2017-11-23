@@ -6,6 +6,7 @@ public class User {
     private String lastName;
     private String email;
     private String picture;
+    private String id;
 
     public User(String firstName, String lastName, String email, String picture) {
         this.firstName = firstName;
@@ -51,5 +52,13 @@ public class User {
 
     public String getFullname() {
         return getFirstName() + " " + getLastName();
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

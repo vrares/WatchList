@@ -60,6 +60,7 @@
     <string name="save_changes">Save Changes</string>
     <string name="your_hit_list">Your Hit-List</string>
     <string name="s_hit_list">\'s Hit-List</string>
+    <string name="feel_free_to_search_for_any_user">Feel free to search for any user</string>
 
     <string-array name="genre_arrays">
         <item>All</item>

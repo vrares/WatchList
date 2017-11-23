@@ -1,6 +1,7 @@
 package com.vrares.watchlist.android.helpers;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,7 +21,9 @@ import com.vrares.watchlist.presenters.callbacks.LoginPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.MovieDetailsPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.RegisterPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.UserDetailsPresenterCallback;
+import com.vrares.watchlist.presenters.callbacks.UserSearchPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.WatchersPresenterCallback;
+import com.vrares.watchlist.presenters.classes.UserSearchPresenter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,7 +40,7 @@ public class DatabaseHelper {
     private static final String SEEN_BY_NODE = "seenBy";
     private static final String SEEN_COUNT = "seenCount";
     private static final String FULL_NAME_NODE = "fullname";
-    private static final String TIME  = "time";
+    private static final String TIME = "time";
     private static final String TAG = "Error";
     private static final String EMAIL_NODE = "email";
     private static final String FIRST_NAME_NODE = "firstName";
@@ -50,11 +53,12 @@ public class DatabaseHelper {
     private MovieDetailsPresenterCallback movieDetailsPresenterCallback;
     private UserDetailsPresenterCallback userDetailsPresenterCallback;
     private WatchersPresenterCallback watchersPresenterCallback;
+    private UserSearchPresenterCallback userSearchPresenterCallback;
 
     private DatabaseReference ref;
     private FirebaseAuth auth;
 
-    public void insertUserIntoDatabase(final User user, final RegisterPresenterCallback registerCallback, final LoginPresenterCallback  loginCallback, final UserDetailsPresenterCallback userDetailsCallback) {
+    public void insertUserIntoDatabase(final User user, final RegisterPresenterCallback registerCallback, final LoginPresenterCallback loginCallback, final UserDetailsPresenterCallback userDetailsCallback) {
         this.registerPresenterCallback = registerCallback;
         this.loginPresenterCallback = loginCallback;
         this.userDetailsPresenterCallback = userDetailsCallback;
@@ -240,7 +244,7 @@ public class DatabaseHelper {
     }
 
     public void getUserDetails(final String uid, LoginPresenterCallback loginCallback) {
-        this.loginPresenterCallback= loginCallback;
+        this.loginPresenterCallback = loginCallback;
         ref = FirebaseDatabase.getInstance().getReference(USERS_NODE);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -249,7 +253,7 @@ public class DatabaseHelper {
                 String firstName = dataSnapshot.child(uid).child(FIRST_NAME_NODE).getValue().toString();
                 String lastName = dataSnapshot.child(uid).child(LAST_NAME_NODE).getValue().toString();
                 String picture = dataSnapshot.child(uid).child(PICTURE_NODE).getValue().toString();
-                User user = new User(firstName, lastName,email,picture);
+                User user = new User(firstName, lastName, email, picture);
                 loginPresenterCallback.onUserDetailsRetrieved(user);
             }
 
@@ -263,24 +267,59 @@ public class DatabaseHelper {
     public void getWatchers(Movie movie, final ArrayList<Watcher> watcherList, WatchersPresenterCallback watchersCallback) {
         this.watchersPresenterCallback = watchersCallback;
         ref = FirebaseDatabase.getInstance().getReference(MOVIES_NODE);
-       ref.child(String.valueOf(movie.getId())).child(SEEN_BY_NODE).addValueEventListener(new ValueEventListener() {
-           @Override
-           public void onDataChange(DataSnapshot dataSnapshot) {
-               for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                   String id = snapshot.getKey();
-                   String name = snapshot.child(FULL_NAME_NODE).getValue().toString();
-                   String picture = snapshot.child(PICTURE_NODE).getValue().toString();
-                   String time = snapshot.child(TIME).getValue().toString();
-                   Watcher watcher = new Watcher(name, picture, id, time);
-                   watcherList.add(watcher);
-               }
-               watchersPresenterCallback.onWatchersReceived(watcherList);
-           }
+        ref.child(String.valueOf(movie.getId())).child(SEEN_BY_NODE).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String id = snapshot.getKey();
+                    String name = snapshot.child(FULL_NAME_NODE).getValue().toString();
+                    String picture = snapshot.child(PICTURE_NODE).getValue().toString();
+                    String time = snapshot.child(TIME).getValue().toString();
+                    Watcher watcher = new Watcher(name, picture, id, time);
+                    watcherList.add(watcher);
+                }
+                watchersPresenterCallback.onWatchersReceived(watcherList);
+            }
 
-           @Override
-           public void onCancelled(DatabaseError databaseError) {
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
                 Log.d(TAG, databaseError.getMessage());
-           }
-       });
+            }
+        });
+    }
+
+    public void searchForUser(final String userQuery, final ArrayList<User> usersList, UserSearchPresenterCallback userSearchCallback) {
+        usersList.clear();
+        this.userSearchPresenterCallback = userSearchCallback;
+        ref = FirebaseDatabase.getInstance().getReference(USERS_NODE);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    if (snapshot.child(EMAIL_NODE).getValue().toString().toLowerCase().contains(userQuery) ||
+                            snapshot.child(FULL_NAME_NODE).getValue().toString().toLowerCase().contains(userQuery)) {
+                        String id = snapshot.getKey();
+                        String firstName = snapshot.child(FIRST_NAME_NODE).getValue().toString();
+                        String lastName = snapshot.child(LAST_NAME_NODE).getValue().toString();
+                        String email = snapshot.child(EMAIL_NODE).getValue().toString();
+                        String picture = snapshot.child(PICTURE_NODE).getValue().toString();
+                        User user = new User(firstName, lastName, email, picture);
+                        user.setId(id);
+                        usersList.add(user);
+                    }
+
+                }
+                userSearchPresenterCallback.onUserSearchComplete(usersList);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, databaseError.getMessage());
+            }
+        });
+    }
+
+    public void setPictureFromGallery(Context context, Intent data) {
     }
 }
