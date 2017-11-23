@@ -21,7 +21,7 @@ import android.widget.ProgressBar;
 import com.vrares.watchlist.MyApplication;
 import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.views.MovieListView;
-import com.vrares.watchlist.models.adapters.MovieListMovieListAdapter;
+import com.vrares.watchlist.models.adapters.MovieListAdapter;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.presenters.classes.MovieListPresenter;
 
@@ -73,7 +73,7 @@ public class MovieListFragment extends Fragment implements MovieListView {
     private RecyclerView.OnScrollListener scrollListener;
     private ArrayList<Movie> movieList;
     private Scope scope;
-    private MovieListMovieListAdapter movieListAdapter;
+    private MovieListAdapter movieListAdapter;
     private LinearLayoutManager linearLayoutManager;
 
     public MovieListFragment() {
@@ -116,7 +116,7 @@ public class MovieListFragment extends Fragment implements MovieListView {
     public void onPopularMoviesRetrieved(ArrayList<Movie> movieList) {
         this.movieList.addAll(movieList);
 
-        movieListAdapter = new MovieListMovieListAdapter(this.movieList, getContext(), pbList);
+        movieListAdapter = new MovieListAdapter(this.movieList, getContext(), pbList);
         rvMovieList.setAdapter(movieListAdapter);
         rvMovieList.setLayoutManager(linearLayoutManager);
         movieListAdapter.notifyItemRangeChanged(this.movieList.size() - movieList.size(), movieList.size());
@@ -128,7 +128,7 @@ public class MovieListFragment extends Fragment implements MovieListView {
     public void onGenreMoviesRetrieved(ArrayList<Movie> genreMovieList) {
         movieList.addAll(genreMovieList);
 
-        movieListAdapter = new MovieListMovieListAdapter(movieList, getContext(), pbList);
+        movieListAdapter = new MovieListAdapter(movieList, getContext(), pbList);
         rvMovieList.setAdapter(movieListAdapter);
         rvMovieList.setLayoutManager(linearLayoutManager);
         movieListAdapter.notifyItemRangeChanged(movieList.size() - genreMovieList.size(), genreMovieList.size());
@@ -141,7 +141,7 @@ public class MovieListFragment extends Fragment implements MovieListView {
     public void onSearchMoviesRetrieved(ArrayList<Movie> movieList) {
         this.movieList.addAll(movieList);
 
-        movieListAdapter = new MovieListMovieListAdapter(this.movieList, getContext(), pbList);
+        movieListAdapter = new MovieListAdapter(this.movieList, getContext(), pbList);
         rvMovieList.setAdapter(movieListAdapter);
         rvMovieList.setLayoutManager(linearLayoutManager);
         movieListAdapter.notifyItemRangeChanged(this.movieList.size() - movieList.size(), movieList.size());

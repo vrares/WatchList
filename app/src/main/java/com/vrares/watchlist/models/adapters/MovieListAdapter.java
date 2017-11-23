@@ -29,7 +29,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class MovieListMovieListAdapter extends RecyclerView.Adapter<MovieListMovieListAdapter.MyViewHolder> implements MovieListAdapterCallback {
+public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MyViewHolder> implements MovieListAdapterCallback {
 
     public static final String POSTER_URL = "http://image.tmdb.org/t/p/";
     private static final String LOGO_W45 = "w45/";
@@ -40,7 +40,7 @@ public class MovieListMovieListAdapter extends RecyclerView.Adapter<MovieListMov
     private Context context;
     private ProgressBar pbList;
 
-    public MovieListMovieListAdapter(ArrayList<Movie> movieList, Context context, ProgressBar pbList) {
+    public MovieListAdapter(ArrayList<Movie> movieList, Context context, ProgressBar pbList) {
         this.movieList = movieList;
         this.context = context;
         this.pbList = pbList;
@@ -61,7 +61,6 @@ public class MovieListMovieListAdapter extends RecyclerView.Adapter<MovieListMov
         holder.buttonItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                seenButtonAction(movie, holder, position);
                 if(holder.buttonItem.getBackground().getConstantState() == context.getResources().getDrawable(R.drawable.btn_seen).getConstantState()) {
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
                     alertDialog.setMessage("Are you sure you want to delete this movie from your seen list?");
@@ -71,6 +70,7 @@ public class MovieListMovieListAdapter extends RecyclerView.Adapter<MovieListMov
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             unseeButtonAction(movie, holder, position);
+                            holder.buttonItem.setBackgroundResource(R.drawable.btn_unseen);
                         }
                     });
 
@@ -80,8 +80,11 @@ public class MovieListMovieListAdapter extends RecyclerView.Adapter<MovieListMov
                             dialog.cancel();
                         }
                     });
+                    alertDialog.show();
+                } else {
+                    seenButtonAction(movie, holder, position);
+                    holder.buttonItem.setBackgroundResource(R.drawable.btn_seen);
                 }
-                holder.buttonItem.setBackgroundResource(R.drawable.btn_seen);
             }
         });
 
@@ -99,7 +102,7 @@ public class MovieListMovieListAdapter extends RecyclerView.Adapter<MovieListMov
     }
 
     private void unseeButtonAction(Movie movie, MyViewHolder holder, int position) {
-        databaseHelper.unseeButtonAction(movie, context, this, holder, position);
+        databaseHelper.unseeButtonAction(movie, this, holder, position);
     }
 
 

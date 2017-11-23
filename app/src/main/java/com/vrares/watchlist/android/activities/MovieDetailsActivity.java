@@ -30,7 +30,7 @@ import butterknife.OnClick;
 import toothpick.Scope;
 import toothpick.Toothpick;
 
-import static com.vrares.watchlist.models.adapters.MovieListMovieListAdapter.POSTER_URL;
+import static com.vrares.watchlist.models.adapters.MovieListAdapter.POSTER_URL;
 
 public class MovieDetailsActivity extends AppCompatActivity implements MovieDetailsView{
 
