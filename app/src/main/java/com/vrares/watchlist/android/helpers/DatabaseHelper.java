@@ -13,7 +13,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.vrares.watchlist.R;
 import com.vrares.watchlist.models.adapters.MovieListAdapterCallback;
-import com.vrares.watchlist.models.adapters.MovieListMovieListAdapter;
+import com.vrares.watchlist.models.adapters.MovieListAdapter;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.models.pojos.User;
 import com.vrares.watchlist.presenters.callbacks.LoginPresenterCallback;
@@ -33,7 +33,7 @@ public class DatabaseHelper {
     private static final String SEEN_BY_NODE = "seenBy";
     private static final String SEEN_COUNT = "seenCount";
     private static final String FULL_NAME_NODE = "fullname";
-    private static final String TIME  = "time";
+    private static final String TIME = "time";
     private static final String TAG = "Error";
 
     private RegisterPresenterCallback registerPresenterCallback;
@@ -43,7 +43,7 @@ public class DatabaseHelper {
     private DatabaseReference ref;
     private FirebaseAuth auth;
 
-    public void insertUserIntoDatabase(final User user, final RegisterPresenterCallback registerCallback, final LoginPresenterCallback  loginCallback) {
+    public void insertUserIntoDatabase(final User user, final RegisterPresenterCallback registerCallback, final LoginPresenterCallback loginCallback) {
         this.registerPresenterCallback = registerCallback;
         this.loginPresenterCallback = loginCallback;
         ref = FirebaseDatabase.getInstance().getReference(USERS_NODE);
@@ -69,7 +69,7 @@ public class DatabaseHelper {
 
     }
 
-    public void getSeenInformation(final Integer movieId, final MovieListMovieListAdapter.MyViewHolder holder, final Movie movie) {
+    public void getSeenInformation(final Integer movieId, final MovieListAdapter.MyViewHolder holder, final Movie movie) {
         ref = FirebaseDatabase.getInstance().getReference(MOVIES_NODE);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -96,7 +96,7 @@ public class DatabaseHelper {
         });
     }
 
-    public void seenButtonAction(final Movie movie, final Context context, MovieListAdapterCallback movieListCallback, final MovieListMovieListAdapter.MyViewHolder holder, final int position) {
+    public void seenButtonAction(final Movie movie, final Context context, MovieListAdapterCallback movieListCallback, final MovieListAdapter.MyViewHolder holder, final int position) {
         this.movieListAdapterCallback = movieListCallback;
         final String movieId = String.valueOf(movie.getId());
         final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -105,14 +105,7 @@ public class DatabaseHelper {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 auth = FirebaseAuth.getInstance();
-                if (dataSnapshot.hasChild(movieId)) {
-                    if (dataSnapshot.child(movieId).child(SEEN_BY_NODE).hasChild(currentUser.getUid())) {
-                        Toast.makeText(context, "Movie Already Seen", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    setSeen(movie, holder, position);
-
-                }
+               setSeen(movie, holder, position);
             }
 
             @Override
@@ -122,7 +115,7 @@ public class DatabaseHelper {
         });
     }
 
-    private void setSeen(final Movie movie, final MovieListMovieListAdapter.MyViewHolder holder, final int position) {
+    private void setSeen(final Movie movie, final MovieListAdapter.MyViewHolder holder, final int position) {
         final int[] operations = new int[2];
         final DatabaseReference movieRef = FirebaseDatabase.getInstance().getReference(MOVIES_NODE);
         ref = FirebaseDatabase.getInstance().getReference(USERS_NODE);
@@ -145,6 +138,7 @@ public class DatabaseHelper {
 
         movieRef.addListenerForSingleValueEvent(new ValueEventListener() {
             int seenCount;
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -174,7 +168,7 @@ public class DatabaseHelper {
         return date.format(calendar.getTime());
     }
 
-    public void unseeButtonAction(Movie movie, Context context, MovieListAdapterCallback movieListCallback, MovieListMovieListAdapter.MyViewHolder holder, int position) {
+    public void unseeButtonAction(Movie movie, MovieListAdapterCallback movieListCallback, final MovieListAdapter.MyViewHolder holder, final int position) {
         this.movieListAdapterCallback = movieListCallback;
         final String movieId = String.valueOf(movie.getId());
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -190,6 +184,7 @@ public class DatabaseHelper {
                     seenCount = seenCount - 1;
                     ref.child(movieId).child(SEEN_COUNT).setValue(seenCount);
                 }
+                movieListAdapterCallback.onMovieSeen(seenCount, holder, position);
             }
 
             @Override
