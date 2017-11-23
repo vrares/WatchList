@@ -1,6 +1,7 @@
 package com.vrares.watchlist.android.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,15 +15,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.fragments.HitListFragment;
 import com.vrares.watchlist.android.fragments.MovieListFragment;
 import com.vrares.watchlist.android.fragments.UserDetailsFragment;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.vrares.watchlist.android.activities.LoginActivity.EMAIL_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.FIRST_NAME_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.LAST_NAME_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.PICTURE_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.SHARED_PREF;
+
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private View navHeader;
+    private CircleImageView civUserPicture;
+    private TextView tvUserName;
+    private TextView tvUserEmail;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +47,7 @@ public class NavigationActivity extends AppCompatActivity
         setContentView(R.layout.activity_navigation);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -44,6 +62,20 @@ public class NavigationActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        navHeader = navigationView.getHeaderView(0);
+        civUserPicture  = navHeader.findViewById(R.id.civ_header_picture);
+        tvUserName =  navHeader.findViewById(R.id.tv_header_name);
+        tvUserEmail = navHeader.findViewById(R.id.tv_header_email);
+
+        sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        Glide.with(this)
+                .load(sharedPreferences.getString(PICTURE_PREF, "default"))
+                .into(civUserPicture);
+        tvUserName.setText(sharedPreferences.getString(FIRST_NAME_PREF, "null") +  " " +
+        sharedPreferences.getString(LAST_NAME_PREF, "null"));
+        tvUserEmail.setText(sharedPreferences.getString(EMAIL_PREF, "null"));
+
     }
 
 

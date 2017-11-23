@@ -34,7 +34,7 @@ import static com.vrares.watchlist.models.adapters.MovieListAdapter.POSTER_URL;
 
 public class MovieDetailsActivity extends AppCompatActivity implements MovieDetailsView{
 
-    private static final String BANNER_W1280 = "w1280/";
+    public static final String BANNER_W1280 = "w1280/";
     private static final String POSTER_W780= "w780/";
     private static final String SHARE_URL = "https://www.themoviedb.org/movie/";
 
@@ -103,6 +103,15 @@ public class MovieDetailsActivity extends AppCompatActivity implements MovieDeta
     public void openBrowserMoviePage() {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(SHARE_URL + movie.getId()));
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.btn_other_watchers)
+    public void goToWatchersList() {
+        Intent intent = Henson.with(this)
+                .gotoWatchersActivity()
+                .movie(movie)
+                .build();
         startActivity(intent);
     }
 

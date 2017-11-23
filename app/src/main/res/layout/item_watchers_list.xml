@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/civ_watcher_picture"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginEnd="5dp"/>
+    
+    <TextView
+        android:layout_toEndOf="@id/civ_watcher_picture"
+        tools:text="Vultur Rares"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:id="@+id/tv_watchers_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_watchers_date"
+        android:layout_toEndOf="@id/civ_watcher_picture"
+        android:layout_below="@id/tv_watchers_name"
+        tools:text="Some random date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/tv_watchers_location"
+        android:layout_toEndOf="@id/civ_watcher_picture"
+        tools:text="Some random location"
+        android:layout_below="@id/tv_watchers_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

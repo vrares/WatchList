@@ -15,12 +15,15 @@ import com.vrares.watchlist.models.adapters.MovieListAdapterCallback;
 import com.vrares.watchlist.models.adapters.MovieListAdapter;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.models.pojos.User;
+import com.vrares.watchlist.models.pojos.Watcher;
 import com.vrares.watchlist.presenters.callbacks.LoginPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.MovieDetailsPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.RegisterPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.UserDetailsPresenterCallback;
+import com.vrares.watchlist.presenters.callbacks.WatchersPresenterCallback;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import javax.inject.Singleton;
@@ -46,6 +49,7 @@ public class DatabaseHelper {
     private MovieListAdapterCallback movieListAdapterCallback;
     private MovieDetailsPresenterCallback movieDetailsPresenterCallback;
     private UserDetailsPresenterCallback userDetailsPresenterCallback;
+    private WatchersPresenterCallback watchersPresenterCallback;
 
     private DatabaseReference ref;
     private FirebaseAuth auth;
@@ -141,9 +145,9 @@ public class DatabaseHelper {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String userName = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(FULL_NAME_NODE).getValue().toString();
                 String userPicture = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(USER_PICTURE_NODE).getValue().toString();
-                movieRef.child(movie.getId().toString()).child(SEEN_BY_NODE).child(FirebaseAuth.getInstance().getUid()).child(FULL_NAME_NODE).setValue(userName);
-                movieRef.child(movie.getId().toString()).child(SEEN_BY_NODE).child(FirebaseAuth.getInstance().getUid()).child(TIME).setValue(getCurrentDate());
-                movieRef.child(movie.getId().toString()).child(SEEN_BY_NODE).child(FirebaseAuth.getInstance().getUid()).child(USER_PICTURE_NODE).setValue(userPicture);
+                movieRef.child(movie.getId().toString()).child(SEEN_BY_NODE).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(FULL_NAME_NODE).setValue(userName);
+                movieRef.child(movie.getId().toString()).child(SEEN_BY_NODE).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(TIME).setValue(getCurrentDate());
+                movieRef.child(movie.getId().toString()).child(SEEN_BY_NODE).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(USER_PICTURE_NODE).setValue(userPicture);
                 operations[0] = 1;
             }
 
@@ -254,5 +258,29 @@ public class DatabaseHelper {
 
             }
         });
+    }
+
+    public void getWatchers(Movie movie, final ArrayList<Watcher> watcherList, WatchersPresenterCallback watchersCallback) {
+        this.watchersPresenterCallback = watchersCallback;
+        ref = FirebaseDatabase.getInstance().getReference(MOVIES_NODE);
+       ref.child(String.valueOf(movie.getId())).child(SEEN_BY_NODE).addValueEventListener(new ValueEventListener() {
+           @Override
+           public void onDataChange(DataSnapshot dataSnapshot) {
+               for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                   String id = snapshot.getKey();
+                   String name = snapshot.child(FULL_NAME_NODE).getValue().toString();
+                   String picture = snapshot.child(PICTURE_NODE).getValue().toString();
+                   String time = snapshot.child(TIME).getValue().toString();
+                   Watcher watcher = new Watcher(name, picture, id, time);
+                   watcherList.add(watcher);
+               }
+               watchersPresenterCallback.onWatchersReceived(watcherList);
+           }
+
+           @Override
+           public void onCancelled(DatabaseError databaseError) {
+                Log.d(TAG, databaseError.getMessage());
+           }
+       });
     }
 }
