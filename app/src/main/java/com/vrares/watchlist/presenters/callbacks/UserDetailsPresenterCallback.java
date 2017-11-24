@@ -7,5 +7,7 @@ public interface UserDetailsPresenterCallback {
 
     void onPasswordValidated(User newUser);
 
-    void onUserInsertedSuccess();
+    void onUserInsertedSuccess(User user);
+
+    void onUserUpdateFailed(Exception exception);
 }

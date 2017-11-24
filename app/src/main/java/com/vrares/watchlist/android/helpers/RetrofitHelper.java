@@ -6,7 +6,9 @@ import com.vrares.watchlist.android.views.SplashView;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.models.pojos.MovieList;
 import com.vrares.watchlist.models.pojos.Session;
+import com.vrares.watchlist.presenters.callbacks.HitListPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.MovieListPresenterCallback;
+import com.vrares.watchlist.presenters.classes.HitListPresenter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -158,5 +160,34 @@ public class RetrofitHelper {
                 Log.d(TAG, t.getMessage());
             }
         });
+    }
+
+    public void getMovieDetails(ArrayList<String> idList, final ArrayList<Movie> hitList, final HitListPresenterCallback hitListPresenterCallback) {
+        TmdbClient tmdbClient = getRetrofitInstance().create(TmdbClient.class);
+
+        for (String id : idList) {
+
+            Map<String, String> data = new HashMap<>();
+            data.put(API_KEY_TAG, API_KEY);
+            data.put(LANGUAGE_TAG, LANGUAGE);
+
+            Call<Movie> call = tmdbClient.getMovie(id, data);
+            call.enqueue(new Callback<Movie>() {
+                @Override
+                public void onResponse(Call<Movie> call, Response<Movie> response) {
+                    if (response.isSuccessful()) {
+                        hitList.add(response.body());
+                        hitListPresenterCallback.onHitListReceived(hitList);
+                    } else {
+                        Log.d(TAG, response.message());
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Movie> call, Throwable t) {
+                    Log.d(TAG, t.getMessage());
+                }
+            });
+        }
     }
 }

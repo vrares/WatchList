@@ -1,8 +1,5 @@
 package com.vrares.watchlist.presenters.classes;
 
-import android.content.Context;
-import android.content.Intent;
-
 import com.vrares.watchlist.android.helpers.ConnectivityHelper;
 import com.vrares.watchlist.android.helpers.DatabaseHelper;
 import com.vrares.watchlist.android.views.UserDetailsView;
@@ -25,7 +22,7 @@ public class UserDetailsPresenter implements UserDetailsPresenterCallback{
         this.userDetailsView = null;
     }
 
-    public void updateData(String pass, User newUser) {
+    public void updateData(User newUser) {
         databaseHelper.insertUserIntoDatabase(newUser, null, null, this);
 
     }
@@ -40,7 +37,12 @@ public class UserDetailsPresenter implements UserDetailsPresenterCallback{
     }
 
     @Override
-    public void onUserInsertedSuccess() {
-        userDetailsView.onUserUpdated();
+    public void onUserInsertedSuccess(User user) {
+        userDetailsView.onUserUpdated(user);
+    }
+
+    @Override
+    public void onUserUpdateFailed(Exception exception) {
+        userDetailsView.onUserUpdateFailed(exception);
     }
 }

@@ -26,24 +26,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:labelFor="@id/edit_et_pass"
-        android:id="@+id/tv_confirm"
-        android:text="@string/please_type_your_password_to_confirm_your_changes"
-        android:layout_below="@id/edit_et_name"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:layout_marginTop="50dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <EditText
-        android:inputType="textPassword"
-        android:id="@+id/edit_et_pass"
-        android:layout_below="@id/tv_confirm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <Button
         android:id="@+id/edit_btn_save"
         android:layout_alignParentBottom="true"

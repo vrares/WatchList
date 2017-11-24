@@ -18,8 +18,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.vrares.watchlist.MyApplication;
 import com.vrares.watchlist.R;
+import com.vrares.watchlist.android.activities.NavigationActivity;
 import com.vrares.watchlist.android.views.UserDetailsView;
 import com.vrares.watchlist.models.pojos.User;
+import com.vrares.watchlist.models.utils.AlertDialogCallback;
 import com.vrares.watchlist.models.utils.AlertDialogUtil;
 import com.vrares.watchlist.presenters.classes.UserDetailsPresenter;
 
@@ -42,22 +44,15 @@ import static com.vrares.watchlist.android.activities.LoginActivity.SHARED_PREF;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class UserDetailsFragment extends Fragment implements UserDetailsView {
+public class UserDetailsFragment extends Fragment implements UserDetailsView, AlertDialogCallback {
 
     public static final int GALLERY_CODE = 1;
 
-    @Inject
-    UserDetailsPresenter userDetailsPresenter;
-    @BindView(R.id.edit_picture)
-    CircleImageView civPicture;
-    @BindView(R.id.edit_et_name)
-    EditText etName;
-    @BindView(R.id.edit_et_pass)
-    EditText etPass;
-    @BindView(R.id.edit_btn_save)
-    Button btnSave;
-    @BindView(R.id.edit_pb)
-    ProgressBar pbLoad;
+    @Inject UserDetailsPresenter userDetailsPresenter;
+    @BindView(R.id.edit_picture) CircleImageView civPicture;
+    @BindView(R.id.edit_et_name) EditText etName;
+    @BindView(R.id.edit_btn_save) Button btnSave;
+    @BindView(R.id.edit_pb) ProgressBar pbLoad;
 
     private Scope scope;
     private User user;
@@ -99,16 +94,8 @@ public class UserDetailsFragment extends Fragment implements UserDetailsView {
 
     @OnClick(R.id.edit_btn_save)
     public void updateData() {
-        String userName = etName.getText().toString();
-        String[] userNameSplitted = userName.split(" ");
-        if (!isPictureChanged) {
-            newUser = new User(userNameSplitted[0], userNameSplitted[1], user.getEmail(), user.getPicture());
-        } else {
-            newUser = new User(userNameSplitted[0], userNameSplitted[1], user.getEmail(), picturePath);
-        }
-        pbLoad.setVisibility(View.VISIBLE);
-        btnSave.setVisibility(View.GONE);
-        userDetailsPresenter.updateData(etPass.getText().toString(), newUser);
+        AlertDialogUtil alertDialogUtil = new AlertDialogUtil(getContext());
+        alertDialogUtil.displayChoiceAlert("Are you sure you want to update your information?", this);
     }
 
     @OnClick(R.id.edit_picture)
@@ -128,6 +115,7 @@ public class UserDetailsFragment extends Fragment implements UserDetailsView {
             Glide.with(this)
                     .load(picturePath)
                     .into(civPicture);
+            isPictureChanged = true;
         }
     }
 
@@ -152,16 +140,38 @@ public class UserDetailsFragment extends Fragment implements UserDetailsView {
     }
 
     @Override
-    public void onUserUpdated() {
+    public void onUserUpdated(User user) {
+
         Toast.makeText(getContext(), "User Updated", Toast.LENGTH_SHORT).show();
+        sharedPreferences.edit()
+                .putString(FIRST_NAME_PREF, newUser.getFirstName())
+                .putString(LAST_NAME_PREF, newUser.getLastName())
+                .putString(PICTURE_PREF, user.getPicture())
+                .apply();
+        ((NavigationActivity)getActivity()).updateUserDetails();
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, new MovieListFragment())
                 .commit();
-        sharedPreferences.edit()
-                .putString(FIRST_NAME_PREF, newUser.getFirstName())
-                .putString(LAST_NAME_PREF, newUser.getLastName())
-                .apply();
 
+    }
+
+    @Override
+    public void onUserUpdateFailed(Exception exception) {
+        new AlertDialogUtil(getContext()).displayAlert("Attention", exception.getMessage());
+    }
+
+    @Override
+    public void updateUser() {
+        String userName = etName.getText().toString();
+        String[] userNameSplitted = userName.split(" ");
+        if (!isPictureChanged) {
+            newUser = new User(userNameSplitted[0], userNameSplitted[1], user.getEmail(), user.getPicture());
+        } else {
+            newUser = new User(userNameSplitted[0], userNameSplitted[1], user.getEmail(), picturePath);
+        }
+        pbLoad.setVisibility(View.VISIBLE);
+        btnSave.setVisibility(View.GONE);
+        userDetailsPresenter.updateData(newUser);
     }
 }
