@@ -32,7 +32,6 @@ public class ConnectivityHelper {
     private FirebaseAuth auth;
     private RegisterPresenterCallback registerPresenterCallback;
     private LoginPresenterCallback loginPresenterCallback;
-    private UserDetailsPresenterCallback userDetailsPresenterCallback;
 
     public void register(final User user, String password, RegisterPresenterCallback registerCallback) {
         this.registerPresenterCallback = registerCallback;
@@ -140,27 +139,4 @@ public class ConnectivityHelper {
                 });
     }
 
-    public void updateData(String pass, UserDetailsPresenterCallback userDetailsCallback, final User newUser) {
-        this.userDetailsPresenterCallback = userDetailsCallback;
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        AuthCredential credential = EmailAuthProvider.getCredential(currentUser.getEmail(), pass);
-
-        currentUser.reauthenticate(credential)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            userDetailsPresenterCallback.onPasswordValidated(newUser);
-                        } else {
-                            userDetailsPresenterCallback.onPasswordValidationFailed(task.getException());
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        userDetailsPresenterCallback.onPasswordValidationFailed(e);
-                    }
-                });
-    }
 }

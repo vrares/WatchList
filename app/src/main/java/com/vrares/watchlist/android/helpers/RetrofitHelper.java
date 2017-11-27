@@ -2,13 +2,9 @@ package com.vrares.watchlist.android.helpers;
 
 import android.util.Log;
 
-import com.vrares.watchlist.android.views.SplashView;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.models.pojos.MovieList;
-import com.vrares.watchlist.models.pojos.Session;
-import com.vrares.watchlist.presenters.callbacks.HitListPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.MovieListPresenterCallback;
-import com.vrares.watchlist.presenters.classes.HitListPresenter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,7 +35,6 @@ public class RetrofitHelper {
     private static final String QUERY_TAG = "query";
 
     private MovieListPresenterCallback movieListPresenterCallback;
-    private SplashView splashView;
 
     private static Retrofit getRetrofitInstance() {
         return new Retrofit.Builder()
@@ -131,32 +126,6 @@ public class RetrofitHelper {
 
             @Override
             public void onFailure(Call<MovieList> call, Throwable t) {
-                Log.d(TAG, t.getMessage());
-            }
-        });
-    }
-
-    public void createSession(final SplashView splashCallback) {
-        this.splashView = splashCallback;
-        TmdbClient tmdbClient = getRetrofitInstance().create(TmdbClient.class);
-
-        Call<Session> call = tmdbClient.createSession(API_KEY);
-        call.enqueue(new Callback<Session>() {
-            @Override
-            public void onResponse(Call<Session> call, Response<Session> response) {
-                if (response.isSuccessful()) {
-                    Session session = new Session();
-                    session.setSuccess(response.body().getSuccess());
-                    session.setGuestSessionId(response.body().getGuestSessionId());
-                    session.setExpiresAt(response.body().getExpiresAt());
-                    splashCallback.onSessionCreated(session);
-                } else {
-                    Log.d(TAG, response.message());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Session> call, Throwable t) {
                 Log.d(TAG, t.getMessage());
             }
         });

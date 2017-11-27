@@ -29,6 +29,11 @@ public class WatchersPresenter implements WatchersPresenterCallback{
 
     @Override
     public void onWatchersReceived(ArrayList<Watcher> watcherList) {
+        databaseHelper.getWatcherEmail(watcherList, this);
+    }
+
+    @Override
+    public void onFinalWatchersReceived(ArrayList<Watcher> watcherList) {
         watchersView.onWatchersReceived(watcherList);
     }
 }

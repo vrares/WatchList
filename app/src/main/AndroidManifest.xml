@@ -35,7 +35,9 @@
             android:label="@string/title_activity_navigation"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".android.activities.MovieDetailsActivity" />
-        <activity android:name=".android.activities.WatchersActivity"></activity>
+        <activity android:name=".android.activities.WatchersActivity" />
+        <activity android:name=".android.activities.UserProfileActivity" />
+        <activity android:name=".android.activities.HitListActivity"></activity>
     </application>
 
 </manifest>

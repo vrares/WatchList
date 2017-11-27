@@ -1,14 +1,18 @@
 package com.vrares.watchlist.models.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.vrares.watchlist.R;
+import com.vrares.watchlist.android.activities.Henson;
 import com.vrares.watchlist.models.pojos.User;
 
 import java.util.ArrayList;
@@ -35,12 +39,26 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
 
     @Override
     public void onBindViewHolder(UserListAdapter.MyViewHolder holder, int position) {
-        User user = usersList.get(position);
+        final User user = usersList.get(position);
         Glide.with(context)
                 .load(user.getPicture())
                 .into(holder.civPicture);
         holder.tvName.setText(user.getFullname());
         holder.tvEmail.setText(user.getEmail());
+        if (user.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            holder.btnFriend.setVisibility(View.GONE);
+        }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = Henson.with(context)
+                        .gotoUserProfileActivity()
+                        .user(user)
+                        .build();
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -53,6 +71,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
         @BindView(R.id.item_users_picture)CircleImageView civPicture;
         @BindView(R.id.item_users_name)TextView tvName;
         @BindView(R.id.item_users_email)TextView tvEmail;
+        @BindView(R.id.item_users_btn_friend)Button btnFriend;
 
         public MyViewHolder(View itemView) {
             super(itemView);

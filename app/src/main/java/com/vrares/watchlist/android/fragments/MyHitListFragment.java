@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,17 +39,19 @@ import static com.vrares.watchlist.android.activities.LoginActivity.SHARED_PREF;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HitListFragment extends Fragment implements HitListView{
+public class MyHitListFragment extends Fragment implements HitListView{
 
     @BindView(R.id.tv_hit_name)TextView ownerName;
     @BindView(R.id.rv_hit_list)RecyclerView rvHitList;
+    @BindView(R.id.pb_hitlist)ProgressBar pbLoading;
     @Inject HitListPresenter hitListPresenter;
 
     private ArrayList<HitMovie> hitList;
     private HitListAdapter hitListAdapter;
     private SharedPreferences sharedPreferences;
+    private boolean loading;
 
-    public HitListFragment() {
+    public MyHitListFragment() {
         // Required empty public constructor
     }
 
@@ -68,6 +71,7 @@ public class HitListFragment extends Fragment implements HitListView{
         super.onStart();
         hitListPresenter.attach(this);
         hitList.clear();
+        switchVisibility(loading);
         hitListPresenter.getHitList(hitList, FirebaseAuth.getInstance().getCurrentUser().getUid());
     }
 
@@ -78,6 +82,7 @@ public class HitListFragment extends Fragment implements HitListView{
     }
 
     public void init() {
+        loading = true;
         hitList = new ArrayList<>();
         sharedPreferences = getContext().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
         ownerName.setText(sharedPreferences.getString(FIRST_NAME_PREF, "") + " " + sharedPreferences.getString(LAST_NAME_PREF, ""));
@@ -85,11 +90,22 @@ public class HitListFragment extends Fragment implements HitListView{
 
     @Override
     public void onHitListReceived(ArrayList<HitMovie> hitList) {
+        loading = false;
+        switchVisibility(loading);
         this.hitList = hitList;
-        hitListAdapter = new HitListAdapter(hitList, getContext(), FirebaseAuth.getInstance().getCurrentUser().getUid());
+        hitListAdapter = new HitListAdapter(hitList, getContext());
         rvHitList.setAdapter(hitListAdapter);
         rvHitList.setLayoutManager(new GridLayoutManager(getContext(), 2));
         hitListAdapter.notifyDataSetChanged();
-        //// TODO: 11/24/2017 Test it
+    }
+
+    public void switchVisibility(boolean loading) {
+        if (loading) {
+            pbLoading.setVisibility(View.VISIBLE);
+            rvHitList.setVisibility(View.GONE);
+        } else {
+            pbLoading.setVisibility(View.GONE);
+            rvHitList.setVisibility(View.VISIBLE);
+        }
     }
 }

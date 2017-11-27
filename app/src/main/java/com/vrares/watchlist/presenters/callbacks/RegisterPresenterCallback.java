@@ -11,5 +11,5 @@ public interface RegisterPresenterCallback {
 
     void onAccountCreatedFailure(Exception e);
 
-    void onUserInsertedSuccess();
+    void onUserInsertedSuccess(User user);
 }

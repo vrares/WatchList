@@ -1,7 +1,7 @@
 package com.vrares.watchlist.android.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Button;
@@ -22,6 +22,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import toothpick.Scope;
 import toothpick.Toothpick;
+
+import static com.vrares.watchlist.android.activities.LoginActivity.EMAIL_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.FIRST_NAME_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.LAST_NAME_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.PICTURE_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.SHARED_PREF;
 
 public class RegisterActivity extends AppCompatActivity implements RegisterView{
 
@@ -93,10 +99,18 @@ public class RegisterActivity extends AppCompatActivity implements RegisterView{
     }
 
     @Override
-    public void onUserInsertedSuccess() {
+    public void onUserInsertedSuccess(User user) {
         progressDialogUtil.dismiss();
         Toast.makeText(this, "User created with success", Toast.LENGTH_SHORT).show();
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+        sharedPreferences.edit()
+                .putString(EMAIL_PREF, user.getEmail())
+                .putString(FIRST_NAME_PREF, user.getFirstName())
+                .putString(LAST_NAME_PREF, user.getLastName())
+                .putString(PICTURE_PREF, user.getPicture())
+                .apply();
         Intent intent = new Intent(this, SplashActivity.class);
         startActivity(intent);
+        finish();
     }
 }

@@ -12,13 +12,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.activities.Henson;
-import com.vrares.watchlist.android.helpers.DatabaseHelper;
 import com.vrares.watchlist.models.pojos.HitMovie;
-import com.vrares.watchlist.models.pojos.Movie;
 
 import java.util.ArrayList;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,17 +22,15 @@ import butterknife.ButterKnife;
 import static com.vrares.watchlist.android.activities.MovieDetailsActivity.BANNER_W1280;
 import static com.vrares.watchlist.models.adapters.MovieListAdapter.POSTER_URL;
 
-public class HitListAdapter extends RecyclerView.Adapter<HitListAdapter.MyViewHolder> implements HitListAdapterCallback{
+public class HitListAdapter extends RecyclerView.Adapter<HitListAdapter.MyViewHolder> {
 
 
     private ArrayList<HitMovie> movieList;
     private Context context;
-    private String userId;
 
-    public HitListAdapter(ArrayList<HitMovie> movieList, Context context, String userId) {
+    public HitListAdapter(ArrayList<HitMovie> movieList, Context context) {
         this.movieList = movieList;
         this.context = context;
-        this.userId = userId;
     }
 
     @Override
@@ -69,11 +63,6 @@ public class HitListAdapter extends RecyclerView.Adapter<HitListAdapter.MyViewHo
     @Override
     public int getItemCount() {
         return movieList.size();
-    }
-
-    @Override
-    public void onSeenDateReceived(String seenDate, MyViewHolder holder) {
-        holder.tvDate.setText(seenDate);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

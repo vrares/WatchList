@@ -61,6 +61,10 @@
     <string name="your_hit_list">Your Hit-List</string>
     <string name="s_hit_list">\'s Hit-List</string>
     <string name="feel_free_to_search_for_any_user">Feel free to search for any user</string>
+    <string name="chat">Chat</string>
+    <string name="favourite_movies">Favourite Movies</string>
+    <string name="hit_list">Hit List</string>
+    <string name="add_friend">Add Friend</string>
 
     <string-array name="genre_arrays">
         <item>All</item>

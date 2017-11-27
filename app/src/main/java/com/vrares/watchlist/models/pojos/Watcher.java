@@ -8,6 +8,7 @@ public class Watcher implements Serializable{
     private String picture;
     private String id;
     private String time;
+    private String email;
 
     public Watcher(String fullname, String picture, String id, String time) {
         this.fullname = fullname;
@@ -17,6 +18,14 @@ public class Watcher implements Serializable{
     }
 
     public Watcher() {
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getFullname() {

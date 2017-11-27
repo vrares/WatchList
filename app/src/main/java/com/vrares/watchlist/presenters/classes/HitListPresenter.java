@@ -4,7 +4,6 @@ import com.vrares.watchlist.android.helpers.DatabaseHelper;
 import com.vrares.watchlist.android.helpers.RetrofitHelper;
 import com.vrares.watchlist.android.views.HitListView;
 import com.vrares.watchlist.models.pojos.HitMovie;
-import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.presenters.callbacks.HitListPresenterCallback;
 
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public class HitListPresenter implements HitListPresenterCallback{
     }
 
     @Override
-    public void onMoviesReceived(ArrayList<HitMovie> hitList) {
-        databaseHelper.getSeenDate(hitList, this);
+    public void onMoviesReceived(ArrayList<HitMovie> hitList, String uId) {
+        databaseHelper.getSeenDate(hitList, this, uId);
     }
 }

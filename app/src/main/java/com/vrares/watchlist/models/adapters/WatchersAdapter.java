@@ -1,6 +1,7 @@
 package com.vrares.watchlist.models.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.vrares.watchlist.R;
+import com.vrares.watchlist.android.activities.Henson;
+import com.vrares.watchlist.models.pojos.User;
 import com.vrares.watchlist.models.pojos.Watcher;
 
 import java.util.ArrayList;
@@ -47,6 +50,20 @@ public class WatchersAdapter extends RecyclerView.Adapter<WatchersAdapter.MyView
             holder.tvName.setText("You");
         }
         holder.tvDate.setText(watcher.getTime());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userName = watcher.getFullname();
+                String[] userNameSplitted = userName.split(" ");
+                User user = new User(userNameSplitted[0], userNameSplitted[1], watcher.getEmail(), watcher.getPicture());
+                user.setId(watcher.getId());
+                Intent intent = Henson.with(context)
+                        .gotoUserProfileActivity()
+                        .user(user)
+                        .build();
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

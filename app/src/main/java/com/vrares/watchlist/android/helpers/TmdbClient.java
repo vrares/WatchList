@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.models.pojos.MovieList;
-import com.vrares.watchlist.models.pojos.Session;
 
 import java.util.Map;
 
@@ -34,12 +33,5 @@ public interface TmdbClient {
     @SuppressLint("LeadingSlashRetrofitApiEndpoint")
     @GET(SEARCH_LIST)
     Call<MovieList> getSearchList(@QueryMap Map<String, String> filters);
-
-    @SuppressLint("LeadingSlashRetrofitApiEndpoint")
-    @GET(SESSION_CALL)
-    Call<Session> createSession(@Query(API_KEY_TAG) String apiKey);
-
-    @GET(MOVIE + "{movieId}")
-    Call<Movie> getMovie(@Path("movieId") String movieId, @QueryMap Map<String, String> filters);
 
 }

@@ -1,7 +1,5 @@
 package com.vrares.watchlist.android.helpers;
 
-import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -20,8 +18,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.vrares.watchlist.R;
-import com.vrares.watchlist.models.adapters.HitListAdapter;
-import com.vrares.watchlist.models.adapters.HitListAdapterCallback;
 import com.vrares.watchlist.models.adapters.MovieListAdapterCallback;
 import com.vrares.watchlist.models.adapters.MovieListAdapter;
 import com.vrares.watchlist.models.pojos.HitMovie;
@@ -35,7 +31,7 @@ import com.vrares.watchlist.presenters.callbacks.RegisterPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.UserDetailsPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.UserSearchPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.WatchersPresenterCallback;
-import com.vrares.watchlist.presenters.classes.HitListPresenter;
+import com.vrares.watchlist.presenters.classes.WatchersPresenter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -119,7 +115,7 @@ public class DatabaseHelper {
                     if (loginPresenterCallback != null) {
                         loginPresenterCallback.onUserInsertedSuccess();
                     } else if (registerPresenterCallback != null) {
-                        registerPresenterCallback.onUserInsertedSuccess();
+                        registerPresenterCallback.onUserInsertedSuccess(user);
                     }
                 }
             }
@@ -159,10 +155,8 @@ public class DatabaseHelper {
         });
     }
 
-    public void seenButtonAction(final Movie movie, final Context context, MovieListAdapterCallback movieListCallback, final MovieListAdapter.MyViewHolder holder, final int position) {
+    public void seenButtonAction(final Movie movie, MovieListAdapterCallback movieListCallback, final MovieListAdapter.MyViewHolder holder, final int position) {
         this.movieListAdapterCallback = movieListCallback;
-        final String movieId = String.valueOf(movie.getId());
-        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         databaseReference = FirebaseDatabase.getInstance().getReference(MOVIES_NODE);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -364,7 +358,7 @@ public class DatabaseHelper {
     }
 
     public void getHitList(final ArrayList<HitMovie> hitList, final String uId, final HitListPresenterCallback hitListPresenterCallback) {
-        databaseReference = FirebaseDatabase.getInstance().getReference(HIT_LISTS_NODE).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        databaseReference = FirebaseDatabase.getInstance().getReference(HIT_LISTS_NODE).child(uId);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -375,7 +369,7 @@ public class DatabaseHelper {
                     hitList.add(hitMovie);
                 }
 
-                hitListPresenterCallback.onMoviesReceived(hitList);
+                hitListPresenterCallback.onMoviesReceived(hitList, uId);
             }
 
             @Override
@@ -385,7 +379,7 @@ public class DatabaseHelper {
         });
     }
 
-    public void getSeenDate(final ArrayList<HitMovie> hitList, final HitListPresenterCallback hitListPresenter) {
+    public void getSeenDate(final ArrayList<HitMovie> hitList, final HitListPresenterCallback hitListPresenter, final String uId) {
         databaseReference = FirebaseDatabase.getInstance().getReference(MOVIES_NODE);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -393,7 +387,7 @@ public class DatabaseHelper {
 
                 for (HitMovie hitMovie : hitList) {
                     if (dataSnapshot.hasChild(String.valueOf(hitMovie.getMovie().getId()))) {
-                        String seenDate = dataSnapshot.child(String.valueOf(hitMovie.getMovie().getId())).child(SEEN_BY_NODE).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(TIME).getValue().toString();
+                        String seenDate = dataSnapshot.child(String.valueOf(hitMovie.getMovie().getId())).child(SEEN_BY_NODE).child(uId).child(TIME).getValue().toString();
                         hitMovie.setSeenDate(seenDate);
                     }
                 }
@@ -408,5 +402,27 @@ public class DatabaseHelper {
             }
         });
 
+    }
+
+    public void getWatcherEmail(final ArrayList<Watcher> watcherList, WatchersPresenterCallback watchersPresenter) {
+        databaseReference = FirebaseDatabase.getInstance().getReference(USERS_NODE);
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (Watcher watcher : watcherList) {
+                    if (dataSnapshot.hasChild(watcher.getId())) {
+                        String email = dataSnapshot.child(watcher.getId()).child(EMAIL_NODE).getValue().toString();
+                        watcher.setEmail(email);
+                    }
+                }
+
+                watchersPresenterCallback.onFinalWatchersReceived(watcherList);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

@@ -1,12 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.vrares.watchlist.android.fragments.MyHitListFragment"
+    tools:context="com.vrares.watchlist.android.activities.HitListActivity"
     android:layout_margin="15dp">
 
     <LinearLayout
-        android:id="@+id/ll_hit_list_name"
+        android:id="@+id/ll_hit_list_name_remote"
         android:layout_width="wrap_content"
         android:orientation="horizontal"
         android:layout_marginBottom="15dp"
@@ -14,7 +16,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/tv_hit_name"
+            android:id="@+id/tv_hit_name_remote"
             tools:text="Rares Vultur"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -22,7 +24,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/tv_hit_title"
+            android:id="@+id/tv_hit_title_remote"
             android:textStyle="bold"
             android:text="@string/s_hit_list"
             android:textSize="20sp"
@@ -32,17 +34,17 @@
     </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/pb_hitlist"
-        android:layout_below="@id/ll_hit_list_name"
+        android:id="@+id/pb_hitlist_remote"
+        android:layout_below="@id/ll_hit_list_name_remote"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_hit_list"
+        android:id="@+id/rv_hit_list_remote"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/ll_hit_list_name"
+        android:layout_below="@id/ll_hit_list_name_remote"
         android:visibility="gone">
 
     </android.support.v7.widget.RecyclerView>

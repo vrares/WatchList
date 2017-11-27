@@ -38,7 +38,7 @@ public class RegisterPresenter implements RegisterPresenterCallback{
     }
 
     @Override
-    public void onUserInsertedSuccess() {
-        registerView.onUserInsertedSuccess();
+    public void onUserInsertedSuccess(User user) {
+        registerView.onUserInsertedSuccess(user);
     }
 }

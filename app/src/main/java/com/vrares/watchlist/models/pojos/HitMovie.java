@@ -5,11 +5,6 @@ public class HitMovie {
     private Movie movie;
     private String seenDate;
 
-    public HitMovie(Movie movie, String seenDate) {
-        this.movie = movie;
-        this.seenDate = seenDate;
-    }
-
     public HitMovie() {
     }
 

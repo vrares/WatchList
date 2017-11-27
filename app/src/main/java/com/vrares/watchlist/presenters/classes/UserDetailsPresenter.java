@@ -28,15 +28,6 @@ public class UserDetailsPresenter implements UserDetailsPresenterCallback{
     }
 
     @Override
-    public void onPasswordValidationFailed(Exception exception) {
-        userDetailsView.onPasswordValidationFailed(exception);
-    }
-
-    @Override
-    public void onPasswordValidated(User newUser) {
-    }
-
-    @Override
     public void onUserInsertedSuccess(User user) {
         userDetailsView.onUserUpdated(user);
     }

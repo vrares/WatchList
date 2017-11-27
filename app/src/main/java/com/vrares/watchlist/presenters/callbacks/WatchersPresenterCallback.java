@@ -6,4 +6,6 @@ import java.util.ArrayList;
 
 public interface WatchersPresenterCallback {
     void onWatchersReceived(ArrayList<Watcher> watcherList);
+
+    void onFinalWatchersReceived(ArrayList<Watcher> watcherList);
 }

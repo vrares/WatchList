@@ -112,7 +112,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MyVi
     }
 
     private void seenButtonAction(Movie movie, MyViewHolder holder, int position) {
-        databaseHelper.seenButtonAction(movie, context, this, holder, position);
+        databaseHelper.seenButtonAction(movie, this, holder, position);
     }
 
     @Override
