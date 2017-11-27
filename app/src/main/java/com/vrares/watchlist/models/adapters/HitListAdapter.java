@@ -1,6 +1,7 @@
 package com.vrares.watchlist.models.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +11,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.vrares.watchlist.R;
+import com.vrares.watchlist.android.activities.Henson;
 import com.vrares.watchlist.android.helpers.DatabaseHelper;
+import com.vrares.watchlist.models.pojos.HitMovie;
 import com.vrares.watchlist.models.pojos.Movie;
 
 import java.util.ArrayList;
@@ -20,17 +23,17 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.vrares.watchlist.android.activities.MovieDetailsActivity.BANNER_W1280;
 import static com.vrares.watchlist.models.adapters.MovieListAdapter.POSTER_URL;
 
 public class HitListAdapter extends RecyclerView.Adapter<HitListAdapter.MyViewHolder> implements HitListAdapterCallback{
 
-    @Inject DatabaseHelper databaseHelper;
 
-    private ArrayList<Movie> movieList;
+    private ArrayList<HitMovie> movieList;
     private Context context;
     private String userId;
 
-    public HitListAdapter(ArrayList<Movie> movieList, Context context, String userId) {
+    public HitListAdapter(ArrayList<HitMovie> movieList, Context context, String userId) {
         this.movieList = movieList;
         this.context = context;
         this.userId = userId;
@@ -44,12 +47,23 @@ public class HitListAdapter extends RecyclerView.Adapter<HitListAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Movie movie = movieList.get(position);
-        holder.tvTitle.setText(movie.getOriginalTitle());
+        final HitMovie movie = movieList.get(position);
+        holder.tvTitle.setText(movie.getMovie().getOriginalTitle());
         Glide.with(context)
-                .load(POSTER_URL + movie.getBackdropPath())
+                .load(POSTER_URL + BANNER_W1280 + movie.getMovie().getBackdropPath())
                 .into(holder.ivBackdrop);
-        databaseHelper.getSeenDate(movie.getId(), userId, this, holder);
+        holder.tvDate.setText(movie.getSeenDate());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = Henson.with(context)
+                        .gotoMovieDetailsActivity()
+                        .movie(movie.getMovie())
+                        .build();
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

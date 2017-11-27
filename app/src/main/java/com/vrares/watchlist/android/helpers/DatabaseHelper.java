@@ -24,6 +24,7 @@ import com.vrares.watchlist.models.adapters.HitListAdapter;
 import com.vrares.watchlist.models.adapters.HitListAdapterCallback;
 import com.vrares.watchlist.models.adapters.MovieListAdapterCallback;
 import com.vrares.watchlist.models.adapters.MovieListAdapter;
+import com.vrares.watchlist.models.pojos.HitMovie;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.models.pojos.User;
 import com.vrares.watchlist.models.pojos.Watcher;
@@ -48,6 +49,8 @@ public class DatabaseHelper {
     private static final String USERS_NODE = "users";
     private static final String USER_PICTURE_NODE = "picture";
     private static final String MOVIES_NODE = "movies";
+    private static final String HIT_LISTS_NODE = "hitList";
+    private static final String FAV_LISTS_NODE = "favList";
     private static final String SEEN_BY_NODE = "seenBy";
     private static final String SEEN_COUNT = "seenCount";
     private static final String FULL_NAME_NODE = "fullname";
@@ -178,6 +181,7 @@ public class DatabaseHelper {
     private void setSeen(final Movie movie, final MovieListAdapter.MyViewHolder holder, final int position) {
         final int[] operations = new int[2];
         final DatabaseReference movieRef = FirebaseDatabase.getInstance().getReference(MOVIES_NODE);
+        final DatabaseReference listsRef = FirebaseDatabase.getInstance().getReference(HIT_LISTS_NODE);
         databaseReference = FirebaseDatabase.getInstance().getReference(USERS_NODE);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -187,6 +191,7 @@ public class DatabaseHelper {
                 movieRef.child(movie.getId().toString()).child(SEEN_BY_NODE).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(FULL_NAME_NODE).setValue(userName);
                 movieRef.child(movie.getId().toString()).child(SEEN_BY_NODE).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(TIME).setValue(getCurrentDate());
                 movieRef.child(movie.getId().toString()).child(SEEN_BY_NODE).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(USER_PICTURE_NODE).setValue(userPicture);
+                listsRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(String.valueOf(movie.getId())).setValue(movie);
                 operations[0] = 1;
             }
 
@@ -231,7 +236,8 @@ public class DatabaseHelper {
     public void unseeButtonAction(Movie movie, MovieListAdapterCallback movieListCallback, final MovieListAdapter.MyViewHolder holder, final int position) {
         this.movieListAdapterCallback = movieListCallback;
         final String movieId = String.valueOf(movie.getId());
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference listDatabase = FirebaseDatabase.getInstance().getReference(HIT_LISTS_NODE);
         databaseReference = FirebaseDatabase.getInstance().getReference(MOVIES_NODE);
         databaseReference.child(movieId).child(SEEN_BY_NODE).child(currentUser.getUid()).removeValue();
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -240,6 +246,8 @@ public class DatabaseHelper {
                 int seenCount = dataSnapshot.child(movieId).child(SEEN_COUNT).getValue(Integer.class);
                 if (seenCount == 1) {
                     databaseReference.child(movieId).removeValue();
+                    listDatabase.child(currentUser.getUid()).child(movieId).removeValue();
+
                 } else {
                     seenCount = seenCount - 1;
                     databaseReference.child(movieId).child(SEEN_COUNT).setValue(seenCount);
@@ -355,13 +363,19 @@ public class DatabaseHelper {
         });
     }
 
-    public void getSeenDate(Integer movieId, String userId, final HitListAdapterCallback hitListCallback, final HitListAdapter.MyViewHolder holder) {
-        databaseReference = FirebaseDatabase.getInstance().getReference(MOVIES_NODE);
-        databaseReference.child(String.valueOf(movieId)).child(SEEN_BY_NODE).child(userId).child(TIME).addListenerForSingleValueEvent(new ValueEventListener() {
+    public void getHitList(final ArrayList<HitMovie> hitList, final String uId, final HitListPresenterCallback hitListPresenterCallback) {
+        databaseReference = FirebaseDatabase.getInstance().getReference(HIT_LISTS_NODE).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String seenDate = dataSnapshot.getValue().toString();
-                hitListCallback.onSeenDateReceived(seenDate, holder);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Movie movie = snapshot.getValue(Movie.class);
+                    HitMovie hitMovie = new HitMovie();
+                    hitMovie.setMovie(movie);
+                    hitList.add(hitMovie);
+                }
+
+                hitListPresenterCallback.onMoviesReceived(hitList);
             }
 
             @Override
@@ -371,19 +385,21 @@ public class DatabaseHelper {
         });
     }
 
-    public void getHitList(final ArrayList<Movie> hitList, final String uId, final HitListPresenterCallback hitListPresenterCallback) {
-        final ArrayList<String> idList = new ArrayList<>();
+    public void getSeenDate(final ArrayList<HitMovie> hitList, final HitListPresenterCallback hitListPresenter) {
         databaseReference = FirebaseDatabase.getInstance().getReference(MOVIES_NODE);
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if (snapshot.child(SEEN_BY_NODE).hasChild(uId)) {
-                        idList.add(snapshot.getKey());
+
+                for (HitMovie hitMovie : hitList) {
+                    if (dataSnapshot.hasChild(String.valueOf(hitMovie.getMovie().getId()))) {
+                        String seenDate = dataSnapshot.child(String.valueOf(hitMovie.getMovie().getId())).child(SEEN_BY_NODE).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(TIME).getValue().toString();
+                        hitMovie.setSeenDate(seenDate);
                     }
                 }
 
-                hitListPresenterCallback.getMovieDetails(idList, hitList);
+                hitListPresenter.onHitListReceived(hitList);
+
             }
 
             @Override
@@ -391,5 +407,6 @@ public class DatabaseHelper {
 
             }
         });
+
     }
 }

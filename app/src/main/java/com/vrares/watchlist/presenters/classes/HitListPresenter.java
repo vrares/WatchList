@@ -3,6 +3,7 @@ package com.vrares.watchlist.presenters.classes;
 import com.vrares.watchlist.android.helpers.DatabaseHelper;
 import com.vrares.watchlist.android.helpers.RetrofitHelper;
 import com.vrares.watchlist.android.views.HitListView;
+import com.vrares.watchlist.models.pojos.HitMovie;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.presenters.callbacks.HitListPresenterCallback;
 
@@ -25,17 +26,19 @@ public class HitListPresenter implements HitListPresenterCallback{
         this.hitListView = null;
     }
 
-    public void getHitList(ArrayList<Movie> hitList, String uId) {
+    public void getHitList(ArrayList<HitMovie> hitList, String uId) {
         databaseHelper.getHitList(hitList, uId, this);
     }
 
     @Override
-    public void getMovieDetails(ArrayList<String> idList, ArrayList<Movie> hitList) {
-        retrofitHelper.getMovieDetails(idList, hitList, this);
+    public void onHitListReceived(ArrayList<HitMovie> hitList) {
+        if (hitListView != null) {
+            hitListView.onHitListReceived(hitList);
+        }
     }
 
     @Override
-    public void onHitListReceived(ArrayList<Movie> hitList) {
-        hitListView.onHitListReceived(hitList);
+    public void onMoviesReceived(ArrayList<HitMovie> hitList) {
+        databaseHelper.getSeenDate(hitList, this);
     }
 }

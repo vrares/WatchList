@@ -33,7 +33,9 @@ public class SplashActivity extends AppCompatActivity implements SplashView {
             startActivity(intent);
             finish();
         } else {
-            retrofitHelper.createSession(splashView);
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
 
     }
@@ -45,8 +47,6 @@ public class SplashActivity extends AppCompatActivity implements SplashView {
         sharedPreferences.edit()
                 .putString(SESSION_PREF, session.getGuestSessionId())
                 .apply();
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivity(intent);
-        finish();
+
     }
 }
