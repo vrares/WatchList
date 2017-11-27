@@ -132,14 +132,6 @@ public class UserDetailsFragment extends Fragment implements UserDetailsView, Al
     }
 
     @Override
-    public void onPasswordValidationFailed(Exception exception) {
-        pbLoad.setVisibility(View.GONE);
-        btnSave.setVisibility(View.VISIBLE);
-        AlertDialogUtil alertDialogUtil = new AlertDialogUtil(getContext());
-        alertDialogUtil.displayAlert("Failure", exception.getMessage());
-    }
-
-    @Override
     public void onUserUpdated(User user) {
 
         Toast.makeText(getContext(), "User Updated", Toast.LENGTH_SHORT).show();
@@ -149,6 +141,8 @@ public class UserDetailsFragment extends Fragment implements UserDetailsView, Al
                 .putString(PICTURE_PREF, user.getPicture())
                 .apply();
         ((NavigationActivity)getActivity()).updateUserDetails();
+        pbLoad.setVisibility(View.GONE);
+        btnSave.setVisibility(View.VISIBLE);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, new MovieListFragment())

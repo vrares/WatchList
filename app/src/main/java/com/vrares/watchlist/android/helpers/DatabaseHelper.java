@@ -201,7 +201,7 @@ public class DatabaseHelper {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot.hasChild(String.valueOf(movie.getId()))) {
+                if (dataSnapshot.hasChild(String.valueOf(movie.getId())) && dataSnapshot.child(String.valueOf(movie.getId())).hasChild(SEEN_COUNT)) {
                     seenCount = dataSnapshot.child(String.valueOf(movie.getId())).child(SEEN_COUNT).getValue(Integer.class);
                     movieRef.child(String.valueOf(movie.getId())).child(SEEN_COUNT).setValue(seenCount + 1);
                 } else {
