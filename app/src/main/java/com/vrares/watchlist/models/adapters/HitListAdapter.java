@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.activities.Henson;
 import com.vrares.watchlist.models.pojos.HitMovie;
+import com.vrares.watchlist.models.utils.DateFormatUtil;
 
 import java.util.ArrayList;
 
@@ -46,7 +47,9 @@ public class HitListAdapter extends RecyclerView.Adapter<HitListAdapter.MyViewHo
         Glide.with(context)
                 .load(POSTER_URL + BANNER_W1280 + movie.getMovie().getBackdropPath())
                 .into(holder.ivBackdrop);
-        holder.tvDate.setText(movie.getSeenDate());
+
+        DateFormatUtil dateFormatUtil = new DateFormatUtil("dd-MMM-yyyy HH:mm");
+        holder.tvDate.setText(dateFormatUtil.getFormatDate(movie.getSeenDate()));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

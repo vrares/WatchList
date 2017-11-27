@@ -33,9 +33,12 @@ import com.vrares.watchlist.presenters.callbacks.UserSearchPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.WatchersPresenterCallback;
 import com.vrares.watchlist.presenters.classes.WatchersPresenter;
 
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.inject.Singleton;
 
@@ -222,9 +225,7 @@ public class DatabaseHelper {
     }
 
     private String getCurrentDate() {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat date = new SimpleDateFormat("dd MMM");
-        return date.format(calendar.getTime());
+        return String.valueOf(new Timestamp(System.currentTimeMillis()).getTime());
     }
 
     public void unseeButtonAction(Movie movie, MovieListAdapterCallback movieListCallback, final MovieListAdapter.MyViewHolder holder, final int position) {

@@ -15,8 +15,11 @@ import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.activities.Henson;
 import com.vrares.watchlist.models.pojos.User;
 import com.vrares.watchlist.models.pojos.Watcher;
+import com.vrares.watchlist.models.utils.DateFormatUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,7 +52,10 @@ public class WatchersAdapter extends RecyclerView.Adapter<WatchersAdapter.MyView
         } else {
             holder.tvName.setText("You");
         }
-        holder.tvDate.setText(watcher.getTime());
+
+        DateFormatUtil dateFormatUtil = new DateFormatUtil("dd-MMM-yyyy HH:mm");
+        holder.tvDate.setText(dateFormatUtil.getFormatDate(watcher.getTime()));
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,4 +89,6 @@ public class WatchersAdapter extends RecyclerView.Adapter<WatchersAdapter.MyView
             ButterKnife.bind(this, itemView);
         }
     }
+
+
 }
