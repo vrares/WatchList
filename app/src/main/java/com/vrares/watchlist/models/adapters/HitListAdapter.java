@@ -80,4 +80,9 @@ public class HitListAdapter extends RecyclerView.Adapter<HitListAdapter.MyViewHo
             ButterKnife.bind(this, itemView);
         }
     }
+
+    public void updateList(ArrayList<HitMovie> list) {
+        movieList = list;
+        notifyDataSetChanged();
+    }
 }

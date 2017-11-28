@@ -158,11 +158,19 @@ public class UserDetailsFragment extends Fragment implements UserDetailsView, Al
     @Override
     public void updateUser() {
         String userName = etName.getText().toString();
-        String[] userNameSplitted = userName.split(" ");
-        if (!isPictureChanged) {
-            newUser = new User(userNameSplitted[0], userNameSplitted[1], user.getEmail(), user.getPicture());
+        if(userName.contains(" ")) {
+            String[] userNameSplitted = userName.split(" ");
+            if (!isPictureChanged) {
+                newUser = new User(userNameSplitted[0], userNameSplitted[1], user.getEmail(), user.getPicture());
+            } else {
+                newUser = new User(userNameSplitted[0], userNameSplitted[1], user.getEmail(), picturePath);
+            }
         } else {
-            newUser = new User(userNameSplitted[0], userNameSplitted[1], user.getEmail(), picturePath);
+            if (!isPictureChanged) {
+                newUser = new User(userName, "", user.getEmail(), user.getPicture());
+            } else {
+                newUser = new User(userName, "", user.getEmail(), picturePath);
+            }
         }
         pbLoad.setVisibility(View.VISIBLE);
         btnSave.setVisibility(View.GONE);

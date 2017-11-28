@@ -67,6 +67,7 @@ public class MovieListFragment extends Fragment implements MovieListView {
     @BindView(R.id.rv_movie_list)RecyclerView rvMovieList;
     @BindView(R.id.fab_scroll_to_top)FloatingActionButton fabScrollToTop;
 
+
     private int pageNumber;
     private int flag;
     private String searchQuery;
