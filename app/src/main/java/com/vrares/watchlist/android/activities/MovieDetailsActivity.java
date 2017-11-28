@@ -2,7 +2,9 @@ package com.vrares.watchlist.android.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.f2prateek.dart.Dart;
@@ -56,6 +59,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements MovieDeta
     @BindView(R.id.pb_movie_details)ProgressBar pbMovieDetails;
 
     private Scope scope;
+    private boolean isFavourite;
 
 
     @Override
@@ -69,6 +73,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements MovieDeta
     }
 
     private void init() {
+        movieDetailsPresenter.checkIfMovieIsFavourite(movie);
         tvTitle.setText(movie.getOriginalTitle());
         tvRating.setText(String.valueOf(movie.getVoteAverage()));
         tvVotes.setText(String.valueOf(movie.getVoteCount()));
@@ -115,6 +120,15 @@ public class MovieDetailsActivity extends AppCompatActivity implements MovieDeta
         startActivity(intent);
     }
 
+    @OnClick(R.id.fab_fav_btn)
+    public void favouriteAction() {
+        if (!isFavourite) {
+            movieDetailsPresenter.markAsFavourite(movie);
+        } else {
+            movieDetailsPresenter.removeFromFavourite(movie);
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_share, menu);
@@ -141,5 +155,30 @@ public class MovieDetailsActivity extends AppCompatActivity implements MovieDeta
         tvView.setText(seenCount);
         init();
         pbMovieDetails.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onMovieMarkedAsFavourites() {
+        fabFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_heart_red));
+        Toast.makeText(this, "Movie marked as favourite", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onFavouriteStatusReturn(boolean isFav) {
+        isFavourite = isFav;
+        if (isFavourite) {
+            fabFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_heart_red));
+
+        } else {
+            fabFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_heart_white));
+
+        }
+    }
+
+    @Override
+    public void onMovieRemovedFromFavourites() {
+        fabFavourite.setImageDrawable(getResources().getDrawable(R.drawable.ic_heart_white));
+        Toast.makeText(this, "Movie removed from favourites", Toast.LENGTH_SHORT).show();
+
     }
 }

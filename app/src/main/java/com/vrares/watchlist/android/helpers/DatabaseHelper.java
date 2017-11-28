@@ -31,6 +31,7 @@ import com.vrares.watchlist.presenters.callbacks.RegisterPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.UserDetailsPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.UserSearchPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.WatchersPresenterCallback;
+import com.vrares.watchlist.presenters.classes.MovieDetailsPresenter;
 import com.vrares.watchlist.presenters.classes.WatchersPresenter;
 
 import java.sql.Timestamp;
@@ -48,6 +49,7 @@ public class DatabaseHelper {
     private static final String USERS_NODE = "users";
     private static final String USER_PICTURE_NODE = "picture";
     private static final String MOVIES_NODE = "movies";
+    private static final String MOVIE_NODE = "movie";
     private static final String HIT_LISTS_NODE = "hitList";
     private static final String FAV_LISTS_NODE = "favList";
     private static final String SEEN_BY_NODE = "seenBy";
@@ -425,5 +427,43 @@ public class DatabaseHelper {
 
             }
         });
+    }
+
+    public void markAsFavourite(final Movie movie, MovieDetailsPresenterCallback movieDetailsPresenter) {
+        databaseReference = FirebaseDatabase.getInstance().getReference(FAV_LISTS_NODE);
+        databaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(String.valueOf(movie.getId())).child(MOVIE_NODE).setValue(movie);
+        databaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(String.valueOf(movie.getId())).child(TIME).setValue(getCurrentDate());
+
+        movieDetailsPresenter.onMovieMarkedAsFavourites();
+    }
+
+    public void checkIfMovieIsFavourite(final Movie movie, MovieDetailsPresenterCallback movieDetailsPresenter) {
+        databaseReference = FirebaseDatabase.getInstance().getReference(FAV_LISTS_NODE);
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    if (dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).hasChild(String.valueOf(movie.getId()))) {
+                        movieDetailsPresenterCallback.onFavouriteStatusReturn(true);
+                    } else {
+                        movieDetailsPresenterCallback.onFavouriteStatusReturn(false);
+                    }
+                } else {
+                    movieDetailsPresenterCallback.onFavouriteStatusReturn(false);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void removeFromFavourite(Movie movie, MovieDetailsPresenterCallback movieDetailsPresenter) {
+        databaseReference = FirebaseDatabase.getInstance().getReference(FAV_LISTS_NODE);
+        databaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(String.valueOf(movie.getId())).removeValue();
+
+        movieDetailsPresenter.onMovieRemovedFromFavourites();
     }
 }

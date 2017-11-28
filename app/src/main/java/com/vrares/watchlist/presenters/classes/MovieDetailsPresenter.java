@@ -29,4 +29,31 @@ public class MovieDetailsPresenter implements MovieDetailsPresenterCallback{
     public void onSeenCountReceived(String seenCount) {
         movieDetailsView.onSeenCountReceived(seenCount);
     }
+
+    @Override
+    public void onMovieMarkedAsFavourites() {
+        movieDetailsView.onMovieMarkedAsFavourites();
+    }
+
+    @Override
+    public void onFavouriteStatusReturn(boolean isFavourite) {
+        movieDetailsView.onFavouriteStatusReturn(isFavourite);
+    }
+
+    @Override
+    public void onMovieRemovedFromFavourites() {
+        movieDetailsView.onMovieRemovedFromFavourites();
+    }
+
+    public void markAsFavourite(Movie movie) {
+        databaseHelper.markAsFavourite(movie, this);
+    }
+
+    public void checkIfMovieIsFavourite(Movie movie) {
+        databaseHelper.checkIfMovieIsFavourite(movie, this);
+    }
+
+    public void removeFromFavourite(Movie movie) {
+        databaseHelper.removeFromFavourite(movie, this);
+    }
 }
