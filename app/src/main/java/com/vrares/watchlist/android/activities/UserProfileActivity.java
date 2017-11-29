@@ -65,9 +65,18 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
     }
 
     @OnClick(R.id.btn_user_hit_list)
-    public void getHitList() {
+    public void goToHitList() {
         Intent intent = Henson.with(this)
                 .gotoHitListActivity()
+                .user(user)
+                .build();
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.btn_user_favourite)
+    public void goToFavList() {
+        Intent intent = Henson.with(this)
+                .gotoFavListActivity()
                 .user(user)
                 .build();
         startActivity(intent);

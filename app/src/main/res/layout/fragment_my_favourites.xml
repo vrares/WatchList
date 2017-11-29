@@ -1,0 +1,84 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.vrares.watchlist.android.fragments.MyFavouritesFragment">
+
+    <LinearLayout
+        android:id="@+id/ll_fav_list_name"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_fav_name"
+            tools:text="Rares Vultur"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_fav_title"
+            android:textStyle="bold"
+            android:text="@string/s_favourite_list"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/ll_filter_fav"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/ll_fav_list_name"
+        android:layout_width="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/fav_label_sort"
+            android:text="@string/sort_by"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/fav_spinner_sort"
+            android:layout_width="wrap_content"
+            android:entries="@array/sort_by"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/fav_label_filter"
+            android:text="@string/filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/fav_spinner_filter"
+            android:layout_width="wrap_content"
+            android:entries="@array/genre_arrays"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_favlist"
+        android:layout_below="@id/ll_filter_fav"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_fav_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ll_filter_fav"
+        android:visibility="gone">
+
+    </android.support.v7.widget.RecyclerView>
+
+</RelativeLayout>

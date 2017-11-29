@@ -37,7 +37,8 @@
         <activity android:name=".android.activities.MovieDetailsActivity" />
         <activity android:name=".android.activities.WatchersActivity" />
         <activity android:name=".android.activities.UserProfileActivity" />
-        <activity android:name=".android.activities.HitListActivity"></activity>
+        <activity android:name=".android.activities.HitListActivity" />
+        <activity android:name=".android.activities.FavListActivity"></activity>
     </application>
 
 </manifest>

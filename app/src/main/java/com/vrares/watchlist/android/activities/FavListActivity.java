@@ -1,7 +1,9 @@
 package com.vrares.watchlist.android.activities;
 
-import android.os.Bundle;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -12,13 +14,14 @@ import android.widget.TextView;
 
 import com.f2prateek.dart.Dart;
 import com.f2prateek.dart.InjectExtra;
+import com.google.firebase.auth.FirebaseAuth;
 import com.vrares.watchlist.MyApplication;
 import com.vrares.watchlist.R;
-import com.vrares.watchlist.android.views.HitListView;
+import com.vrares.watchlist.android.views.FavListView;
 import com.vrares.watchlist.models.adapters.HitListAdapter;
 import com.vrares.watchlist.models.pojos.HitMovie;
 import com.vrares.watchlist.models.pojos.User;
-import com.vrares.watchlist.presenters.classes.HitListPresenter;
+import com.vrares.watchlist.presenters.classes.FavListPresenter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,6 +35,9 @@ import butterknife.ButterKnife;
 import toothpick.Scope;
 import toothpick.Toothpick;
 
+import static com.vrares.watchlist.android.activities.LoginActivity.FIRST_NAME_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.LAST_NAME_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.SHARED_PREF;
 import static com.vrares.watchlist.android.fragments.MovieListFragment.ACTION;
 import static com.vrares.watchlist.android.fragments.MovieListFragment.ADVENTURE;
 import static com.vrares.watchlist.android.fragments.MovieListFragment.ALL;
@@ -53,22 +59,21 @@ import static com.vrares.watchlist.android.fragments.MovieListFragment.TV;
 import static com.vrares.watchlist.android.fragments.MovieListFragment.WAR;
 import static com.vrares.watchlist.android.fragments.MovieListFragment.WESTERN;
 
-public class HitListActivity extends AppCompatActivity implements HitListView{
+public class FavListActivity extends AppCompatActivity implements FavListView{
 
-    @Inject HitListPresenter hitListPresenter;
-
-    @BindView(R.id.tv_hit_name_remote)TextView ownerName;
-    @BindView(R.id.rv_hit_list_remote)RecyclerView rvHitList;
-    @BindView(R.id.pb_hitlist_remote)ProgressBar pbLoading;
-    @BindView(R.id.hit_spinner_sort)Spinner spinnerSort;
-    @BindView(R.id.hit_spinner_filter)Spinner spinnerFilter;
-
+    @BindView(R.id.tv_fav_name) TextView ownerName;
+    @BindView(R.id.rv_fav_list) RecyclerView rvFavList;
+    @BindView(R.id.pb_favlist) ProgressBar pbLoading;
+    @BindView(R.id.fav_spinner_sort) Spinner spinnerSort;
+    @BindView(R.id.fav_spinner_filter) Spinner spinnerFilter;
+    @Inject FavListPresenter favListPresenter;
     @InjectExtra User user;
 
-    private ArrayList<HitMovie> hitList = new ArrayList<>();
-    private ArrayList<HitMovie> fullHitList;
+    private ArrayList<HitMovie> favList = new ArrayList<>();
+    private ArrayList<HitMovie> fullFavList;
     private ArrayList<HitMovie> tempList = new ArrayList<>();
-    private HitListAdapter hitListAdapter;
+    private HitListAdapter favListAdapter;
+    private SharedPreferences sharedPreferences;
     private boolean loading;
     private String sortMode;
     private int filterMode;
@@ -77,7 +82,7 @@ public class HitListActivity extends AppCompatActivity implements HitListView{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_hit_list);
+        setContentView(R.layout.fragment_my_favourites);
         Scope scope = Toothpick.openScopes(MyApplication.getInstance(), this);
         Toothpick.inject(this, scope);
         ButterKnife.bind(this);
@@ -85,26 +90,26 @@ public class HitListActivity extends AppCompatActivity implements HitListView{
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
-        hitListPresenter.attach(this);
-        hitList.clear();
+        favListPresenter.attach(this);
+        favList.clear();
         init();
         switchVisibility(loading);
-        hitListPresenter.getHitList(hitList, user.getId());
+        favListPresenter.getFavList(favList, user.getId());
     }
 
     @Override
-    protected void onStop() {
-        hitListPresenter.detach();
+    public void onStop() {
+        favListPresenter.detach();
         super.onStop();
     }
 
-    private void init() {
+    public void init() {
         loading = true;
-        hitList = new ArrayList<>();
-        ownerName.setText(user.getFullname());
-        hitListAdapter = new HitListAdapter(this.hitList, this);
+        sharedPreferences = getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        ownerName.setText(sharedPreferences.getString(FIRST_NAME_PREF, "") + " " + sharedPreferences.getString(LAST_NAME_PREF, ""));
+        favListAdapter = new HitListAdapter(this.favList, this);
 
         spinnerSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -112,7 +117,7 @@ public class HitListActivity extends AppCompatActivity implements HitListView{
                 sortMode = spinnerSort.getSelectedItem().toString();
                 ArrayList<HitMovie> sortList;
                 if (!isFiltered) {
-                    sortList = hitList;
+                    sortList = favList;
                 } else {
                     sortList = tempList;
                 }
@@ -142,7 +147,7 @@ public class HitListActivity extends AppCompatActivity implements HitListView{
                         }
                     }
                 });
-                hitListAdapter.updateList(sortList);
+                favListAdapter.updateList(sortList);
             }
 
             @Override
@@ -155,7 +160,7 @@ public class HitListActivity extends AppCompatActivity implements HitListView{
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                hitList = fullHitList;
+                favList = fullFavList;
                 switch (spinnerFilter.getSelectedItem().toString()) {
                     case "Action":
                         filterMode = ACTION;
@@ -221,13 +226,13 @@ public class HitListActivity extends AppCompatActivity implements HitListView{
                 }
 
                 boolean hasGenre = false;
-                if (hitList == null) {
-                    hitList = new ArrayList<>();
+                if (favList == null) {
+                    favList = new ArrayList<>();
                 } else {
-                    hitList = fullHitList;
+                    favList = fullFavList;
                 }
                 tempList = new ArrayList<>();
-                for (HitMovie movie : hitList) {
+                for (HitMovie movie : favList) {
                     isFiltered = true;
                     ArrayList<Integer> genreList = movie.getMovie().getGenreIds();
                     for (Integer genreId : genreList) {
@@ -241,11 +246,11 @@ public class HitListActivity extends AppCompatActivity implements HitListView{
 
                 }
                 if (hasGenre && filterMode == ALL){
-                    hitListAdapter.updateList(fullHitList);
+                    favListAdapter.updateList(fullFavList);
                 } else if (hasGenre) {
-                    hitListAdapter.updateList(tempList);
+                    favListAdapter.updateList(tempList);
                 } else if (filterMode != ALL) {
-                    hitListAdapter.updateList(new ArrayList<HitMovie>());
+                    favListAdapter.updateList(new ArrayList<HitMovie>());
                 }
 
             }
@@ -255,11 +260,22 @@ public class HitListActivity extends AppCompatActivity implements HitListView{
 
             }
         });
+
+    }
+
+    public void switchVisibility(boolean loading) {
+        if (loading) {
+            pbLoading.setVisibility(View.VISIBLE);
+            rvFavList.setVisibility(View.GONE);
+        } else {
+            pbLoading.setVisibility(View.GONE);
+            rvFavList.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
-    public void onHitListReceived(ArrayList<HitMovie> hitList) {
-        Collections.sort(hitList, new Comparator<HitMovie>() {
+    public void onFavListReceived(ArrayList<HitMovie> favList) {
+        Collections.sort(favList, new Comparator<HitMovie>() {
             @Override
             public int compare(HitMovie movie1, HitMovie movie2) {
                 return movie1.getMovie().getOriginalTitle().compareToIgnoreCase(movie2.getMovie().getOriginalTitle());
@@ -267,20 +283,10 @@ public class HitListActivity extends AppCompatActivity implements HitListView{
         });
         loading = false;
         switchVisibility(loading);
-        this.fullHitList = hitList;
-        this.hitList = hitList;
-        rvHitList.setAdapter(hitListAdapter);
-        rvHitList.setLayoutManager(new GridLayoutManager(this, 2));
-        hitListAdapter.notifyDataSetChanged();
-    }
-
-    public void switchVisibility(boolean loading) {
-        if (loading) {
-            pbLoading.setVisibility(View.VISIBLE);
-            rvHitList.setVisibility(View.GONE);
-        } else {
-            pbLoading.setVisibility(View.GONE);
-            rvHitList.setVisibility(View.VISIBLE);
-        }
+        this.fullFavList = favList;
+        this.favList = favList;
+        rvFavList.setAdapter(favListAdapter);
+        rvFavList.setLayoutManager(new GridLayoutManager(this, 2));
+        favListAdapter.notifyDataSetChanged();
     }
 }

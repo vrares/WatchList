@@ -131,21 +131,25 @@ public class MyHitListFragment extends Fragment implements HitListView {
                     @Override
                     public int compare(HitMovie movie1, HitMovie movie2) {
 
-                        Date date1 = new Date(Long.parseLong(movie1.getSeenDate()));
-                        Date date2 = new Date(Long.parseLong(movie2.getSeenDate()));
+                        if (movie1.getSeenDate() != null && movie2.getSeenDate() != null) {
+                            Date date1 = new Date(Long.parseLong(movie1.getSeenDate()));
+                            Date date2 = new Date(Long.parseLong(movie2.getSeenDate()));
 
 
-                        switch (sortMode) {
-                            case "Name asc.":
-                                return movie1.getMovie().getOriginalTitle().compareToIgnoreCase(movie2.getMovie().getOriginalTitle());
-                            case "Name desc.":
-                                return movie2.getMovie().getOriginalTitle().compareToIgnoreCase(movie1.getMovie().getOriginalTitle());
-                            case "Date asc.":
-                                return date1.compareTo(date2);
-                            case "Date desc.":
-                                return date2.compareTo(date1);
-                            default:
-                                return -1;
+                            switch (sortMode) {
+                                case "Name asc.":
+                                    return movie1.getMovie().getOriginalTitle().compareToIgnoreCase(movie2.getMovie().getOriginalTitle());
+                                case "Name desc.":
+                                    return movie2.getMovie().getOriginalTitle().compareToIgnoreCase(movie1.getMovie().getOriginalTitle());
+                                case "Date asc.":
+                                    return date1.compareTo(date2);
+                                case "Date desc.":
+                                    return date2.compareTo(date1);
+                                default:
+                                    return -1;
+                            }
+                        } else {
+                            return -1;
                         }
                     }
                 });

@@ -13,10 +13,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.vrares.watchlist.R;
+import com.vrares.watchlist.android.fragments.MyFavouritesFragment;
 import com.vrares.watchlist.android.fragments.MyHitListFragment;
 import com.vrares.watchlist.android.fragments.MovieListFragment;
 import com.vrares.watchlist.android.fragments.UserDetailsFragment;
@@ -104,7 +106,10 @@ public class NavigationActivity extends AppCompatActivity
                     .replace(R.id.fragment_container, new UserDetailsFragment())
                     .commit();
         } else if (id == R.id.nav_favourite_list) {
-
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, new MyFavouritesFragment())
+                    .commit();
         } else if (id == R.id.nav_hit_list) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
@@ -112,6 +117,7 @@ public class NavigationActivity extends AppCompatActivity
                     .commit();
 
         } else if (id == R.id.nav_friends) {
+            Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_user_search) {
             FragmentManager fragmentManager = getSupportFragmentManager();

@@ -24,6 +24,7 @@ import com.vrares.watchlist.models.pojos.HitMovie;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.models.pojos.User;
 import com.vrares.watchlist.models.pojos.Watcher;
+import com.vrares.watchlist.presenters.callbacks.FavListPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.HitListPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.LoginPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.MovieDetailsPresenterCallback;
@@ -31,6 +32,7 @@ import com.vrares.watchlist.presenters.callbacks.RegisterPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.UserDetailsPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.UserSearchPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.WatchersPresenterCallback;
+import com.vrares.watchlist.presenters.classes.FavListPresenter;
 import com.vrares.watchlist.presenters.classes.MovieDetailsPresenter;
 import com.vrares.watchlist.presenters.classes.WatchersPresenter;
 
@@ -465,5 +467,33 @@ public class DatabaseHelper {
         databaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(String.valueOf(movie.getId())).removeValue();
 
         movieDetailsPresenter.onMovieRemovedFromFavourites();
+    }
+
+    public void getFavList(final ArrayList<HitMovie> favList, String uid, final FavListPresenterCallback favListPresenter) {
+        databaseReference = FirebaseDatabase.getInstance().getReference(FAV_LISTS_NODE).child(uid);
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Movie movie = snapshot.child(MOVIE_NODE).getValue(Movie.class);
+                    String time = snapshot.child(TIME).getValue().toString();
+
+                    HitMovie hitMovie = new HitMovie();
+                    hitMovie.setSeenDate(time);
+                    hitMovie.setMovie(movie);
+
+                    favList.add(hitMovie);
+
+                }
+
+                favListPresenter.onFavListRecieved(favList);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
