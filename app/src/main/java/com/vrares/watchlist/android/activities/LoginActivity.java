@@ -199,6 +199,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView, Googl
         progressDialogUtil.dismiss();
         Intent intent = new Intent(this, SplashActivity.class);
         startActivity(intent);
+        finish();
     }
 
     @Override

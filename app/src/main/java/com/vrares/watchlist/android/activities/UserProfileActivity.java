@@ -1,12 +1,15 @@
 package com.vrares.watchlist.android.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.f2prateek.dart.Dart;
@@ -27,6 +30,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import toothpick.Scope;
 import toothpick.Toothpick;
 
+import static com.vrares.watchlist.android.activities.LoginActivity.EMAIL_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.FIRST_NAME_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.LAST_NAME_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.PICTURE_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.SHARED_PREF;
+
 public class UserProfileActivity extends AppCompatActivity implements UserProfileView{
 
     @Inject UserProfilePresenter userProfilePresenter;
@@ -40,6 +49,9 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
     @BindView(R.id.btn_users_friend)Button btnFriend;
 
     @InjectExtra User user;
+
+    private User requestingUser;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +94,13 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
         startActivity(intent);
     }
 
+    @OnClick(R.id.btn_users_friend)
+    public void sendFriendRequest() {
+        userProfilePresenter.sendFriendRequest(user, requestingUser);
+    }
+
     private void init() {
+        userProfilePresenter.checkFriendState(btnFriend, user, requestingUser);
         Glide.with(this)
                 .load(user.getPicture())
                 .into(civPicture);
@@ -91,5 +109,17 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
         if (user.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             btnFriend.setVisibility(View.GONE);
         }
+        sharedPreferences = getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        requestingUser = new User(sharedPreferences.getString(FIRST_NAME_PREF, ""),
+                sharedPreferences.getString(LAST_NAME_PREF, ""),
+                sharedPreferences.getString(EMAIL_PREF, ""),
+                sharedPreferences.getString(PICTURE_PREF, ""));
+        requestingUser.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+    }
+
+    @Override
+    public void onFriendRequestSent() {
+        Toast.makeText(this, "Friend Request Sent", Toast.LENGTH_SHORT).show();
+        btnFriend.setText("Pending...");
     }
 }

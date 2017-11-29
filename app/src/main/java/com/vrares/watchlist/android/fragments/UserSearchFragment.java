@@ -2,6 +2,8 @@ package com.vrares.watchlist.android.fragments;
 
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.vrares.watchlist.MyApplication;
 import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.views.UserSearchView;
@@ -33,6 +36,12 @@ import butterknife.ButterKnife;
 import toothpick.Scope;
 import toothpick.Toothpick;
 
+import static com.vrares.watchlist.android.activities.LoginActivity.EMAIL_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.FIRST_NAME_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.LAST_NAME_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.PICTURE_PREF;
+import static com.vrares.watchlist.android.activities.LoginActivity.SHARED_PREF;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -44,6 +53,8 @@ public class UserSearchFragment extends Fragment implements UserSearchView{
 
     private ArrayList<User> usersList;
     private UserListAdapter userListAdapter;
+    private SharedPreferences sharedPreferences;
+    private User requestingUser;
 
     public UserSearchFragment() {
         // Required empty public constructor
@@ -74,6 +85,12 @@ public class UserSearchFragment extends Fragment implements UserSearchView{
 
     private void init() {
         usersList = new ArrayList<>();
+        sharedPreferences = getContext().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
+        requestingUser = new User(sharedPreferences.getString(FIRST_NAME_PREF, ""),
+                sharedPreferences.getString(LAST_NAME_PREF, ""),
+                sharedPreferences.getString(EMAIL_PREF, ""),
+                sharedPreferences.getString(PICTURE_PREF, ""));
+        requestingUser.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
     }
 
     @Override
@@ -106,7 +123,7 @@ public class UserSearchFragment extends Fragment implements UserSearchView{
             userSearchTitle.setText("Your entry does not match any of our users");
         } else {
             this.usersList = usersList;
-            userListAdapter = new UserListAdapter(getContext(), this.usersList);
+            userListAdapter = new UserListAdapter(getContext(), this.usersList, requestingUser);
             rvUsers.setAdapter(userListAdapter);
             rvUsers.setLayoutManager(new LinearLayoutManager(getContext()));
             userListAdapter.notifyDataSetChanged();

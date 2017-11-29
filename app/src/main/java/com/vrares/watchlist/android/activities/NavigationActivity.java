@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.vrares.watchlist.R;
+import com.vrares.watchlist.android.fragments.FriendsFragment;
 import com.vrares.watchlist.android.fragments.MyFavouritesFragment;
 import com.vrares.watchlist.android.fragments.MyHitListFragment;
 import com.vrares.watchlist.android.fragments.MovieListFragment;
@@ -117,7 +118,10 @@ public class NavigationActivity extends AppCompatActivity
                     .commit();
 
         } else if (id == R.id.nav_friends) {
-            Toast.makeText(this, "Not yet implemented", Toast.LENGTH_SHORT).show();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, new FriendsFragment())
+                    .commit();
 
         } else if (id == R.id.nav_user_search) {
             FragmentManager fragmentManager = getSupportFragmentManager();

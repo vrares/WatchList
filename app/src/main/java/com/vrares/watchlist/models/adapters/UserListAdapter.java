@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.vrares.watchlist.R;
 import com.vrares.watchlist.android.activities.Henson;
+import com.vrares.watchlist.android.helpers.DatabaseHelper;
 import com.vrares.watchlist.models.pojos.User;
 
 import java.util.ArrayList;
@@ -21,14 +22,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyViewHolder> {
+public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyViewHolder> implements UserListAdapterCallback{
 
     private Context context;
     private ArrayList<User> usersList;
+    private DatabaseHelper databaseHelper = new DatabaseHelper();
+    private User requestingUser;
 
-    public UserListAdapter(Context context, ArrayList<User> usersList) {
+    public UserListAdapter(Context context, ArrayList<User> usersList, User requestingUser) {
         this.context = context;
         this.usersList = usersList;
+        this.requestingUser = requestingUser;
     }
 
     @Override
@@ -38,8 +42,9 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(UserListAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(final UserListAdapter.MyViewHolder holder, final int position) {
         final User user = usersList.get(position);
+        databaseHelper.checkFriendButtonState(user, holder);
         Glide.with(context)
                 .load(user.getPicture())
                 .into(holder.civPicture);
@@ -59,6 +64,18 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
                 context.startActivity(intent);
             }
         });
+
+        holder.btnFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendFriendRequest(user, holder, position, requestingUser);
+            }
+        });
+    }
+
+    private void sendFriendRequest(User user, MyViewHolder holder, int position, User requestingUser) {
+        databaseHelper.sendFriendRequest(user, holder, position, requestingUser, this);
+
     }
 
     @Override
@@ -66,12 +83,17 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
         return usersList.size();
     }
 
+    @Override
+    public void onFriendRequestSent(User user, MyViewHolder holder, int position, User requestingUser) {
+        notifyItemChanged(position);
+    }
+
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.item_users_picture)CircleImageView civPicture;
         @BindView(R.id.item_users_name)TextView tvName;
         @BindView(R.id.item_users_email)TextView tvEmail;
-        @BindView(R.id.item_users_btn_friend)Button btnFriend;
+        @BindView(R.id.item_users_btn_friend)public Button btnFriend;
 
         public MyViewHolder(View itemView) {
             super(itemView);

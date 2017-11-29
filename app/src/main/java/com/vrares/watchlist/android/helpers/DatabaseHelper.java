@@ -3,6 +3,8 @@ package com.vrares.watchlist.android.helpers;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -18,22 +20,30 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.vrares.watchlist.R;
+import com.vrares.watchlist.models.adapters.FriendRequestPendingAdapter;
+import com.vrares.watchlist.models.adapters.FriendRequestPendingAdapterCallback;
 import com.vrares.watchlist.models.adapters.MovieListAdapterCallback;
 import com.vrares.watchlist.models.adapters.MovieListAdapter;
+import com.vrares.watchlist.models.adapters.UserListAdapter;
+import com.vrares.watchlist.models.adapters.UserListAdapterCallback;
 import com.vrares.watchlist.models.pojos.HitMovie;
 import com.vrares.watchlist.models.pojos.Movie;
 import com.vrares.watchlist.models.pojos.User;
 import com.vrares.watchlist.models.pojos.Watcher;
 import com.vrares.watchlist.presenters.callbacks.FavListPresenterCallback;
+import com.vrares.watchlist.presenters.callbacks.FriendsPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.HitListPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.LoginPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.MovieDetailsPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.RegisterPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.UserDetailsPresenterCallback;
+import com.vrares.watchlist.presenters.callbacks.UserProfilePresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.UserSearchPresenterCallback;
 import com.vrares.watchlist.presenters.callbacks.WatchersPresenterCallback;
 import com.vrares.watchlist.presenters.classes.FavListPresenter;
+import com.vrares.watchlist.presenters.classes.FriendsPresenter;
 import com.vrares.watchlist.presenters.classes.MovieDetailsPresenter;
+import com.vrares.watchlist.presenters.classes.UserProfilePresenter;
 import com.vrares.watchlist.presenters.classes.WatchersPresenter;
 
 import java.sql.Timestamp;
@@ -63,8 +73,10 @@ public class DatabaseHelper {
     private static final String FIRST_NAME_NODE = "firstName";
     private static final String LAST_NAME_NODE = "lastName";
     private static final String PICTURE_NODE = "picture";
-    private static final String PROFILE_PICTURES  = "profilePictures";
+    private static final String PROFILE_PICTURES = "profilePictures";
     private static final String JPG = ".jpg";
+    private static final String FRIENDS_NODE = "friends";
+    private static final String PENDING_FRIENDS_NODE = "pendingFriendRequests";
 
     private RegisterPresenterCallback registerPresenterCallback;
     private LoginPresenterCallback loginPresenterCallback;
@@ -111,7 +123,6 @@ public class DatabaseHelper {
 
                                 }
                             });
-
 
 
                 } else {
@@ -495,5 +506,123 @@ public class DatabaseHelper {
 
             }
         });
+    }
+
+    public void getPendingAndFriendsList(final ArrayList<User> pendingList, final ArrayList<User> friendsList, final String uId, final FriendsPresenterCallback friendsPresenter) {
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //Check for friends
+                if (dataSnapshot.hasChild(FRIENDS_NODE) && dataSnapshot.child(FRIENDS_NODE).hasChild(uId)) {
+                    for (DataSnapshot snapshot : dataSnapshot.child(FRIENDS_NODE).child(uId).getChildren()) {
+                        User user = snapshot.getValue(User.class);
+                        friendsList.add(user);
+                    }
+                }
+
+                //Check for pending requests
+                if (dataSnapshot.hasChild(PENDING_FRIENDS_NODE) && dataSnapshot.child(PENDING_FRIENDS_NODE).hasChild(uId)) {
+                    for (DataSnapshot snapshot : dataSnapshot.child(PENDING_FRIENDS_NODE).child(uId).getChildren()) {
+                        User user = snapshot.getValue(User.class);
+                        pendingList.add(user);
+                    }
+                }
+
+                friendsPresenter.onPendingAndFriendsReceived(pendingList, friendsList);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void sendFriendRequest(final User user, UserListAdapter.MyViewHolder holder, int position, final User requestingUser, UserListAdapterCallback userListAdapter) {
+        databaseReference = FirebaseDatabase.getInstance().getReference(PENDING_FRIENDS_NODE);
+        databaseReference.child(user.getId()).child(requestingUser.getId()).setValue(requestingUser);
+        userListAdapter.onFriendRequestSent(user, holder, position, requestingUser);
+    }
+
+    public void sendFriendRequest(User user, User requestingUser, UserProfilePresenterCallback userProfilePresenter) {
+        databaseReference = FirebaseDatabase.getInstance().getReference(PENDING_FRIENDS_NODE);
+        databaseReference.child(user.getId()).child(requestingUser.getId()).setValue(requestingUser);
+        userProfilePresenter.onFriendRequestSent();
+    }
+
+    public void checkFriendButtonState(final User user, final UserListAdapter.MyViewHolder holder) {
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(PENDING_FRIENDS_NODE) && dataSnapshot.child(PENDING_FRIENDS_NODE).hasChild(user.getId())) {
+                    if (dataSnapshot.child(PENDING_FRIENDS_NODE).child(user.getId()).hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        holder.btnFriend.setText("Pending...");
+                    } else {
+                        holder.btnFriend.setText("Add Friend");
+                    }
+                }
+
+                if (dataSnapshot.hasChild(FRIENDS_NODE) && dataSnapshot.child(FRIENDS_NODE).hasChild(user.getId())) {
+                    if (dataSnapshot.child(FRIENDS_NODE).child(user.getId()).hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        holder.btnFriend.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void checkFriendState(final Button btnFriend, final User user, User requestingUser) {
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(PENDING_FRIENDS_NODE) && dataSnapshot.child(PENDING_FRIENDS_NODE).hasChild(user.getId())) {
+                    if (dataSnapshot.child(PENDING_FRIENDS_NODE).child(user.getId()).hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        btnFriend.setText("Pending...");
+                    } else {
+                        btnFriend.setText("Add Friend");
+                    }
+                }
+
+                if (dataSnapshot.hasChild(FRIENDS_NODE) && dataSnapshot.child(FRIENDS_NODE).hasChild(user.getId())) {
+                    if (dataSnapshot.child(FRIENDS_NODE).child(user.getId()).hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        btnFriend.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void acceptRequest(final User user, int position, User receivingUser, FriendRequestPendingAdapter.MyViewHolder holder, FriendRequestPendingAdapterCallback friendRequestPendingAdapter) {
+        databaseReference = FirebaseDatabase.getInstance().getReference(PENDING_FRIENDS_NODE).child(receivingUser.getId());
+        databaseReference.child(user.getId()).removeValue();
+
+        DatabaseReference friendsReference = FirebaseDatabase.getInstance().getReference(FRIENDS_NODE);
+        friendsReference.child(receivingUser.getId()).child(user.getId()).setValue(user);
+        friendsReference.child(user.getId()).child(receivingUser.getId()).setValue(receivingUser);
+
+        friendRequestPendingAdapter.onRequestFinished(user, position, receivingUser, holder);
+    }
+
+    public void declineRequest(User user, int position, User receivingUser, FriendRequestPendingAdapter.MyViewHolder holder, FriendRequestPendingAdapterCallback friendRequestPendingAdapter) {
+        databaseReference = FirebaseDatabase.getInstance().getReference(PENDING_FRIENDS_NODE).child(receivingUser.getId());
+        databaseReference.child(user.getId()).removeValue();
+
+        friendRequestPendingAdapter.onRequestFinished(user, position, receivingUser, holder);
+
     }
 }
