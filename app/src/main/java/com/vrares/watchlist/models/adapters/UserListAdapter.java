@@ -68,7 +68,11 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.MyView
         holder.btnFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendFriendRequest(user, holder, position, requestingUser);
+                if (holder.btnFriend.getText().toString().equals("Pending...")) {
+                    // TODO: 29-Nov-17 Popup remove request
+                } else {
+                    sendFriendRequest(user, holder, position, requestingUser);
+                }
             }
         });
     }

@@ -100,8 +100,10 @@ public class FriendsFragment extends Fragment implements FriendsView{
         pendingAdapter = new FriendRequestPendingAdapter(pendingList, getContext(), localUser);
         rvFriends.setAdapter(friendsAdapter);
         rvPending.setAdapter(pendingAdapter);
-        rvFriends.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvPending.setLayoutManager(new GridLayoutManager(getContext(), 4));
+        rvPending.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvFriends.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        pendingAdapter.notifyDataSetChanged();
+        friendsAdapter.notifyDataSetChanged();
 
     }
 }

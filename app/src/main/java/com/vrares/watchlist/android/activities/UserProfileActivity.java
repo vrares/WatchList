@@ -96,7 +96,11 @@ public class UserProfileActivity extends AppCompatActivity implements UserProfil
 
     @OnClick(R.id.btn_users_friend)
     public void sendFriendRequest() {
-        userProfilePresenter.sendFriendRequest(user, requestingUser);
+        if (btnFriend.getText().toString().equals("Pending...")) {
+            Toast.makeText(this, "Friend Request already sent", Toast.LENGTH_SHORT).show();
+        } else {
+            userProfilePresenter.sendFriendRequest(user, requestingUser);
+        }
     }
 
     private void init() {

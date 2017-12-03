@@ -91,7 +91,9 @@ public class FriendRequestPendingAdapter extends RecyclerView.Adapter<FriendRequ
 
     @Override
     public void onRequestFinished(User user, int position, User receivingUser, MyViewHolder holder) {
+        pendingList.remove(position);
         notifyItemRemoved(position);
+        notifyItemRangeChanged(position, pendingList.size());
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

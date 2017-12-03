@@ -515,6 +515,7 @@ public class DatabaseHelper {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //Check for friends
                 if (dataSnapshot.hasChild(FRIENDS_NODE) && dataSnapshot.child(FRIENDS_NODE).hasChild(uId)) {
+                    friendsList.clear();
                     for (DataSnapshot snapshot : dataSnapshot.child(FRIENDS_NODE).child(uId).getChildren()) {
                         User user = snapshot.getValue(User.class);
                         friendsList.add(user);
