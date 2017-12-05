@@ -68,6 +68,7 @@
     <string name="filter">Filter</string>
     <string name="s_favourite_list">\'s favourite list</string>
     <string name="your_friend_s_list">Your friend\'s list</string>
+    <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
 
     <string-array name="genre_arrays">
         <item>All</item>

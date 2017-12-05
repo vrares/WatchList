@@ -4,7 +4,13 @@ package com.vrares.watchlist.android.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,18 +45,11 @@ import static com.vrares.watchlist.android.activities.LoginActivity.SHARED_PREF;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FriendsFragment extends Fragment implements FriendsView{
+public class FriendsFragment extends Fragment{
 
-    @BindView(R.id.rv_friends)RecyclerView rvFriends;
-    @BindView(R.id.rv_pending)RecyclerView rvPending;
-    @Inject FriendsPresenter friendsPresenter;
-
-    private ArrayList<User> pendingList;
-    private ArrayList<User> friendsList;
-    private FriendsAdapter friendsAdapter;
-    private FriendRequestPendingAdapter pendingAdapter;
-    private User localUser;
-    private SharedPreferences sharedPreferences;
+    @BindView(R.id.appBar)AppBarLayout appBarLayout;
+    @BindView(R.id.tabs)TabLayout tabLayout;
+    @BindView(R.id.view_pager_friends)ViewPager viewPager;
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -61,49 +60,7 @@ public class FriendsFragment extends Fragment implements FriendsView{
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_friends, container, false);
         ButterKnife.bind(this, view);
-        Scope scope = Toothpick.openScopes(MyApplication.getInstance(), this);
-        Toothpick.inject(this, scope);
+
         return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        friendsPresenter.attach(this);
-        init();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        friendsPresenter.detach();
-    }
-
-    private void init() {
-        friendsList = new ArrayList<>();
-        pendingList = new ArrayList<>();
-        sharedPreferences = getContext().getSharedPreferences(SHARED_PREF, Context.MODE_PRIVATE);
-        localUser = new User(sharedPreferences.getString(FIRST_NAME_PREF, ""),
-                sharedPreferences.getString(LAST_NAME_PREF, ""),
-                sharedPreferences.getString(EMAIL_PREF, ""),
-                sharedPreferences.getString(PICTURE_PREF, ""));
-        localUser.setId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        friendsPresenter.getPendingAndFriendsList(pendingList, friendsList, FirebaseAuth.getInstance().getCurrentUser().getUid());
-    }
-
-    @Override
-    public void onPendingAndFriendsReceived(ArrayList<User> pendingList, ArrayList<User> friendsList) {
-        this.pendingList = pendingList;
-        this.friendsList = friendsList;
-
-        friendsAdapter = new FriendsAdapter(friendsList, getContext());
-        pendingAdapter = new FriendRequestPendingAdapter(pendingList, getContext(), localUser);
-        rvFriends.setAdapter(friendsAdapter);
-        rvPending.setAdapter(pendingAdapter);
-        rvPending.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvFriends.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        pendingAdapter.notifyDataSetChanged();
-        friendsAdapter.notifyDataSetChanged();
-
     }
 }
